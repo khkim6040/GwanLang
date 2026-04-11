@@ -232,6 +232,44 @@ class ScannerTest {
     }
 
     @Test
+    fun `16개 예약어를 키워드 토큰으로 스캔한다`() {
+        val cases = listOf(
+            "and" to TokenType.AND,
+            "class" to TokenType.CLASS,
+            "else" to TokenType.ELSE,
+            "false" to TokenType.FALSE,
+            "for" to TokenType.FOR,
+            "fun" to TokenType.FUN,
+            "if" to TokenType.IF,
+            "nil" to TokenType.NIL,
+            "or" to TokenType.OR,
+            "print" to TokenType.PRINT,
+            "return" to TokenType.RETURN,
+            "super" to TokenType.SUPER,
+            "this" to TokenType.THIS,
+            "true" to TokenType.TRUE,
+            "var" to TokenType.VAR,
+            "while" to TokenType.WHILE,
+        )
+        for ((src, expected) in cases) {
+            val tokens = scan(src)
+            assertEquals(expected, tokens[0].type, "input='$src'")
+            assertEquals(src, tokens[0].lexeme, "input='$src'")
+        }
+    }
+
+    @Test
+    fun `키워드의 접두사 또는 확장은 IDENTIFIER이다`() {
+        // `orange`는 `or` 키워드가 아닌 IDENTIFIER
+        val tokens = scan("orange class_name")
+
+        assertEquals(TokenType.IDENTIFIER, tokens[0].type)
+        assertEquals("orange", tokens[0].lexeme)
+        assertEquals(TokenType.IDENTIFIER, tokens[1].type)
+        assertEquals("class_name", tokens[1].lexeme)
+    }
+
+    @Test
     fun `연속된 단일 문자 토큰을 순서대로 스캔한다`() {
         val tokens = scan("(){},.-+;*")
 

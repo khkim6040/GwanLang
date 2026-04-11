@@ -77,7 +77,9 @@ class Scanner(private val source: String) {
 
     private fun identifier() {
         while (isAlphaNumeric(peek())) advance()
-        addToken(TokenType.IDENTIFIER)
+        val text = source.substring(start, current)
+        val type = KEYWORDS[text] ?: TokenType.IDENTIFIER
+        addToken(type)
     }
 
     private fun isDigit(c: Char): Boolean = c in '0'..'9'
@@ -106,5 +108,26 @@ class Scanner(private val source: String) {
     private fun addToken(type: TokenType, literal: Any? = null) {
         val lexeme = source.substring(start, current)
         tokens.add(Token(type, lexeme, literal, line))
+    }
+
+    companion object {
+        private val KEYWORDS: Map<String, TokenType> = mapOf(
+            "and" to TokenType.AND,
+            "class" to TokenType.CLASS,
+            "else" to TokenType.ELSE,
+            "false" to TokenType.FALSE,
+            "for" to TokenType.FOR,
+            "fun" to TokenType.FUN,
+            "if" to TokenType.IF,
+            "nil" to TokenType.NIL,
+            "or" to TokenType.OR,
+            "print" to TokenType.PRINT,
+            "return" to TokenType.RETURN,
+            "super" to TokenType.SUPER,
+            "this" to TokenType.THIS,
+            "true" to TokenType.TRUE,
+            "var" to TokenType.VAR,
+            "while" to TokenType.WHILE,
+        )
     }
 }

@@ -52,17 +52,41 @@ Kotlin (JVM) 프로젝트, Gradle (Kotlin DSL) 빌드. 패키지: `gwanlang`.
 ## 구현 Phase
 
 7단계 순차 진행. 다음 Phase 시작 전 이전 Phase 테스트가 모두 통과해야 한다.
-진행 상태는 `GWANLANG_SPEC.md` 6절에서 추적.
+진행 상태는 `GWANLANG_SPEC.md` 6절에서 추적. 각 Phase는 아래 "Phase 작업 순서"에
+따라 스펙 문서 작성부터 시작한다.
 
-| Phase | 모듈 | 추가 기능 |
-|-------|------|----------|
-| 1 | Scanner | 토큰화 |
-| 2 | Parser | AST 생성 |
-| 3 | Evaluator | 표현식 평가 (산술, 비교, 논리) |
-| 4 | Statements | 변수, 스코프, 제어흐름 (if/while/for) |
-| 5 | Functions | 함수 선언/호출, 클로저, return |
-| 6 | Resolver | 정적 변수 바인딩 |
-| 7 | Classes | 클래스, 상속, this, super |
+| Phase | 모듈 | 추가 기능 | 스펙 문서 |
+|-------|------|----------|----------|
+| 1 | Scanner | 토큰화 | `docs/specs/phase1-scanner.md` |
+| 2 | Parser | AST 생성 | `docs/specs/phase2-parser.md` |
+| 3 | Evaluator | 표현식 평가 (산술, 비교, 논리) | `docs/specs/phase3-evaluator.md` |
+| 4 | Statements | 변수, 스코프, 제어흐름 (if/while/for) | `docs/specs/phase4-statements.md` |
+| 5 | Functions | 함수 선언/호출, 클로저, return | `docs/specs/phase5-functions.md` |
+| 6 | Resolver | 정적 변수 바인딩 | `docs/specs/phase6-resolver.md` |
+| 7 | Classes | 클래스, 상속, this, super | `docs/specs/phase7-classes.md` |
+
+## Phase 작업 순서 (스펙 우선 원칙)
+
+모든 Phase는 **스펙 문서 → 테스트 → 구현** 순서로 진행한다.
+스펙 문서 작성이 없으면 TDD 사이클도 시작하지 않는다.
+
+1. **스펙 문서 작성이 첫 단계다.** Phase 구현을 시작하기 전에 반드시
+   `docs/specs/phase{N}-{name}.md` 경로에 해당 Phase의 상세 스펙 문서를 작성한다.
+2. **스펙 문서에 반드시 포함해야 할 항목:**
+   - 목적 및 상위 문서(`GWANLANG_SPEC.md`) 링크
+   - In Scope / Out of Scope (다음 Phase로 미루는 항목 명시)
+   - 산출물 목록 (프로덕션/테스트/기타 파일 경로)
+   - 상세 설계 (타입 정의, 클래스 시그니처, 알고리즘 의사코드)
+   - 에러 처리 방침
+   - 테스트 계획 (TDD 사이클 단위로 쪼갠 표)
+   - 완료 기준(Definition of Done) 체크리스트
+   - 작업 분해 (권장 커밋 단위)
+3. **스펙 문서 확정 후에만 TDD 사이클을 시작한다.** 스펙이 없거나 미확정인
+   상태에서 프로덕션/테스트 코드를 작성하지 않는다.
+4. **스펙 변경은 명시적으로 한다.** 구현 중 설계가 바뀌면 코드보다 먼저
+   스펙 문서를 수정하고, 그 사유를 문서 내에 간단히 남긴다.
+5. Phase 완료 시 스펙 문서의 "완료 기준" 체크리스트를 모두 채운 뒤
+   `docs/CHANGELOG.md`와 `GWANLANG_SPEC.md` §6 진행 추적표를 업데이트한다.
 
 ## 코딩 컨벤션
 

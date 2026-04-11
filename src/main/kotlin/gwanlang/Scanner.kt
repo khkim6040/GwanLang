@@ -42,7 +42,8 @@ class Scanner(private val source: String) {
             ' ', '\r', '\t' -> { /* 공백 무시 */ }
             '\n' -> line++
             '"' -> string()
-            // 숫자/식별자/에러는 다음 사이클에서 처리
+            in '0'..'9' -> number()
+            // 식별자/에러는 다음 사이클에서 처리
         }
     }
 
@@ -60,6 +61,18 @@ class Scanner(private val source: String) {
         addToken(TokenType.STRING, value)
     }
 
+    private fun number() {
+        while (isDigit(peek())) advance()
+        if (peek() == '.' && isDigit(peekNext())) {
+            advance() // '.' 소비
+            while (isDigit(peek())) advance()
+        }
+        val value = source.substring(start, current).toDouble()
+        addToken(TokenType.NUMBER, value)
+    }
+
+    private fun isDigit(c: Char): Boolean = c in '0'..'9'
+
     private fun isAtEnd(): Boolean = current >= source.length
 
     private fun advance(): Char = source[current++]
@@ -72,6 +85,9 @@ class Scanner(private val source: String) {
     }
 
     private fun peek(): Char = if (isAtEnd()) '\u0000' else source[current]
+
+    private fun peekNext(): Char =
+        if (current + 1 >= source.length) '\u0000' else source[current + 1]
 
     private fun addToken(type: TokenType, literal: Any? = null) {
         val lexeme = source.substring(start, current)

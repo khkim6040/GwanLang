@@ -174,6 +174,43 @@ class ScannerTest {
     }
 
     @Test
+    fun `정수 리터럴은 Double 값으로 변환된다`() {
+        val tokens = scan("123")
+
+        assertEquals(TokenType.NUMBER, tokens[0].type)
+        assertEquals("123", tokens[0].lexeme)
+        assertEquals(123.0, tokens[0].literal)
+    }
+
+    @Test
+    fun `소수 리터럴을 스캔한다`() {
+        val tokens = scan("3.14")
+
+        assertEquals(TokenType.NUMBER, tokens[0].type)
+        assertEquals("3.14", tokens[0].lexeme)
+        assertEquals(3.14, tokens[0].literal)
+    }
+
+    @Test
+    fun `숫자 앞 뒤에 digit이 없는 점은 NUMBER에 포함되지 않는다`() {
+        // `.5` → DOT + NUMBER(5.0)
+        val dotFirst = scan(".5")
+        assertEquals(
+            listOf(TokenType.DOT, TokenType.NUMBER, TokenType.EOF),
+            dotFirst.map { it.type },
+        )
+        assertEquals(5.0, dotFirst[1].literal)
+
+        // `5.` → NUMBER(5.0) + DOT
+        val dotLast = scan("5.")
+        assertEquals(
+            listOf(TokenType.NUMBER, TokenType.DOT, TokenType.EOF),
+            dotLast.map { it.type },
+        )
+        assertEquals(5.0, dotLast[0].literal)
+    }
+
+    @Test
     fun `연속된 단일 문자 토큰을 순서대로 스캔한다`() {
         val tokens = scan("(){},.-+;*")
 

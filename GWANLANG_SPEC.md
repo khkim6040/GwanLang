@@ -72,10 +72,10 @@ class Dog < Animal {
 - 식별자 및 키워드: `and, class, else, false, for, fun, if, nil, or, print, return, super, this, true, var, while`
 
 **완료 기준:**
-- [ ] Token, TokenType 정의
-- [ ] Scanner 클래스 구현
-- [ ] 에러 리포팅 (줄 번호 포함)
-- [ ] 테스트: 모든 토큰 타입 스캔 확인
+- [x] Token, TokenType 정의
+- [x] Scanner 클래스 구현
+- [x] 에러 리포팅 (줄 번호 포함)
+- [x] 테스트: 모든 토큰 타입 스캔 확인
 
 ---
 
@@ -321,7 +321,7 @@ class Environment(val enclosing: Environment? = null) {
 
 | Phase | 상태 | 시작일 | 완료일 | 비고 |
 |-------|------|--------|--------|------|
-| 1. Scanner | ⬜ 미시작 | | | |
+| 1. Scanner | ✅ 완료 | 2026-04-11 | 2026-04-11 | TDD 사이클 12개, 테스트 26건 |
 | 2. Parser | ⬜ 미시작 | | | |
 | 3. Evaluator | ⬜ 미시작 | | | |
 | 4. Statements | ⬜ 미시작 | | | |

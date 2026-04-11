@@ -223,13 +223,13 @@ object GwanLang {
 
 ## 6. 완료 기준 (Definition of Done)
 
-- [ ] 위 테스트 계획의 모든 사이클 테스트 존재 및 통과
-- [ ] `./gradlew build` 성공 (경고 0)
-- [ ] `./gradlew run` 으로 REPL 진입 → 입력 → 토큰 출력 확인
-- [ ] `./gradlew run --args="examples/scanner-demo.gwan"` 정상 동작
-- [ ] 에러 케이스(미종료 문자열, 잘못된 문자)에서 line 포함 에러 메시지 출력 + 종료 코드 65
-- [ ] `docs/CHANGELOG.md`에 Phase 1 완료 항목 추가
-- [ ] `GWANLANG_SPEC.md` §6 진행 추적표에서 Phase 1을 ✅ 로 업데이트
+- [x] 위 테스트 계획의 모든 사이클 테스트 존재 및 통과
+- [x] `./gradlew build` 성공 (경고 0)
+- [x] `./gradlew run` 으로 REPL 진입 → 입력 → 토큰 출력 확인
+- [x] `./gradlew run --args="examples/scanner-demo.gwan"` 정상 동작
+- [x] 에러 케이스(미종료 문자열, 잘못된 문자)에서 line 포함 에러 메시지 출력 + 종료 코드 65
+- [x] `docs/CHANGELOG.md`에 Phase 1 완료 항목 추가
+- [x] `GWANLANG_SPEC.md` §6 진행 추적표에서 Phase 1을 ✅ 로 업데이트
 
 ## 7. 작업 분해 (권장 커밋 단위)
 

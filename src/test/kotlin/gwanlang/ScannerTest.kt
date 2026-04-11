@@ -103,6 +103,34 @@ class ScannerTest {
     }
 
     @Test
+    fun `공백 탭 캐리지리턴은 무시된다`() {
+        val tokens = scan("+ \t\r+")
+
+        assertEquals(
+            listOf(TokenType.PLUS, TokenType.PLUS, TokenType.EOF),
+            tokens.map { it.type },
+        )
+    }
+
+    @Test
+    fun `개행은 줄 번호를 증가시킨다`() {
+        val tokens = scan("+\n+\n+")
+
+        assertEquals(1, tokens[0].line)
+        assertEquals(2, tokens[1].line)
+        assertEquals(3, tokens[2].line)
+        assertEquals(3, tokens[3].line) // EOF는 마지막 줄을 그대로 유지
+    }
+
+    @Test
+    fun `주석 이후 개행에서도 줄 번호가 증가한다`() {
+        val tokens = scan("// line1\n+")
+
+        assertEquals(TokenType.PLUS, tokens[0].type)
+        assertEquals(2, tokens[0].line)
+    }
+
+    @Test
     fun `연속된 단일 문자 토큰을 순서대로 스캔한다`() {
         val tokens = scan("(){},.-+;*")
 

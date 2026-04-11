@@ -39,7 +39,9 @@ class Scanner(private val source: String) {
                     addToken(TokenType.SLASH)
                 }
             }
-            // 그 외 문자는 다음 사이클에서 처리 (연산자/공백/리터럴/식별자/에러)
+            ' ', '\r', '\t' -> { /* 공백 무시 */ }
+            '\n' -> line++
+            // 리터럴/식별자/에러는 다음 사이클에서 처리
         }
     }
 

@@ -38,7 +38,7 @@ class Scanner(private val source: String) {
             c == '"' -> string()
             isDigit(c) -> number()
             isAlpha(c) -> identifier()
-            // 에러는 Cycle 11에서 처리
+            else -> GwanLang.error(line, "Unexpected character '$c'.")
         }
     }
 

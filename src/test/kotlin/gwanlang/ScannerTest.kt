@@ -270,6 +270,26 @@ class ScannerTest {
     }
 
     @Test
+    fun `예상하지 못한 문자는 에러로 보고한다`() {
+        val tokens = scan("@")
+
+        assertTrue(GwanLang.hadError)
+        // EOF 외에는 토큰이 추가되지 않아야 한다
+        assertEquals(listOf(TokenType.EOF), tokens.map { it.type })
+    }
+
+    @Test
+    fun `에러 후에도 후속 토큰을 계속 스캔한다`() {
+        val tokens = scan("@+#var")
+
+        assertTrue(GwanLang.hadError)
+        assertEquals(
+            listOf(TokenType.PLUS, TokenType.VAR, TokenType.EOF),
+            tokens.map { it.type },
+        )
+    }
+
+    @Test
     fun `연속된 단일 문자 토큰을 순서대로 스캔한다`() {
         val tokens = scan("(){},.-+;*")
 

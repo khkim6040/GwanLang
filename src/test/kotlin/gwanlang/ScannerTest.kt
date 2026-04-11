@@ -67,6 +67,42 @@ class ScannerTest {
     }
 
     @Test
+    fun `1에서 2문자 비교 및 대입 연산자를 스캔한다`() {
+        val cases = listOf(
+            "!" to TokenType.BANG,
+            "!=" to TokenType.BANG_EQUAL,
+            "=" to TokenType.EQUAL,
+            "==" to TokenType.EQUAL_EQUAL,
+            ">" to TokenType.GREATER,
+            ">=" to TokenType.GREATER_EQUAL,
+            "<" to TokenType.LESS,
+            "<=" to TokenType.LESS_EQUAL,
+        )
+        for ((src, expected) in cases) {
+            val tokens = scan(src)
+            assertEquals(2, tokens.size, "input='$src'")
+            assertEquals(expected, tokens[0].type, "input='$src'")
+            assertEquals(src, tokens[0].lexeme, "input='$src'")
+        }
+    }
+
+    @Test
+    fun `연속된 2문자 연산자를 구분한다`() {
+        val tokens = scan("!===>=<=")
+
+        assertEquals(
+            listOf(
+                TokenType.BANG_EQUAL,
+                TokenType.EQUAL_EQUAL,
+                TokenType.GREATER_EQUAL,
+                TokenType.LESS_EQUAL,
+                TokenType.EOF,
+            ),
+            tokens.map { it.type },
+        )
+    }
+
+    @Test
     fun `연속된 단일 문자 토큰을 순서대로 스캔한다`() {
         val tokens = scan("(){},.-+;*")
 

@@ -27,6 +27,10 @@ class Scanner(private val source: String) {
             '+' -> addToken(TokenType.PLUS)
             ';' -> addToken(TokenType.SEMICOLON)
             '*' -> addToken(TokenType.STAR)
+            '!' -> addToken(if (match('=')) TokenType.BANG_EQUAL else TokenType.BANG)
+            '=' -> addToken(if (match('=')) TokenType.EQUAL_EQUAL else TokenType.EQUAL)
+            '>' -> addToken(if (match('=')) TokenType.GREATER_EQUAL else TokenType.GREATER)
+            '<' -> addToken(if (match('=')) TokenType.LESS_EQUAL else TokenType.LESS)
             '/' -> {
                 if (peek() == '/') {
                     // 단일 라인 주석: 개행 직전까지 소비
@@ -42,6 +46,13 @@ class Scanner(private val source: String) {
     private fun isAtEnd(): Boolean = current >= source.length
 
     private fun advance(): Char = source[current++]
+
+    private fun match(expected: Char): Boolean {
+        if (isAtEnd()) return false
+        if (source[current] != expected) return false
+        current++
+        return true
+    }
 
     private fun peek(): Char = if (isAtEnd()) '\u0000' else source[current]
 

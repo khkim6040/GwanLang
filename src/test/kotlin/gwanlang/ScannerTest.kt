@@ -303,4 +303,55 @@ class ScannerTest {
         )
         assertEquals(expected, tokens.map { it.type })
     }
+
+    @Test
+    fun `통합 스캔 var x equals 1 세미콜론`() {
+        val tokens = scan("var x = 1;")
+
+        assertEquals(
+            listOf(
+                TokenType.VAR,
+                TokenType.IDENTIFIER,
+                TokenType.EQUAL,
+                TokenType.NUMBER,
+                TokenType.SEMICOLON,
+                TokenType.EOF,
+            ),
+            tokens.map { it.type },
+        )
+        assertEquals("x", tokens[1].lexeme)
+        assertEquals(1.0, tokens[3].literal)
+        assertFalse(GwanLang.hadError)
+    }
+
+    @Test
+    fun `통합 스캔 여러 줄 소스`() {
+        val source = """
+            var greeting = "hello";
+            // print 인사말
+            print greeting;
+        """.trimIndent()
+
+        val tokens = scan(source)
+
+        assertEquals(
+            listOf(
+                TokenType.VAR,
+                TokenType.IDENTIFIER,
+                TokenType.EQUAL,
+                TokenType.STRING,
+                TokenType.SEMICOLON,
+                TokenType.PRINT,
+                TokenType.IDENTIFIER,
+                TokenType.SEMICOLON,
+                TokenType.EOF,
+            ),
+            tokens.map { it.type },
+        )
+        assertEquals("hello", tokens[3].literal)
+        // 줄 번호: var는 1줄, print는 3줄 (중간 주석이 2줄)
+        assertEquals(1, tokens[0].line)
+        assertEquals(3, tokens[5].line)
+        assertFalse(GwanLang.hadError)
+    }
 }

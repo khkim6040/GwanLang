@@ -41,8 +41,23 @@ class Scanner(private val source: String) {
             }
             ' ', '\r', '\t' -> { /* 공백 무시 */ }
             '\n' -> line++
-            // 리터럴/식별자/에러는 다음 사이클에서 처리
+            '"' -> string()
+            // 숫자/식별자/에러는 다음 사이클에서 처리
         }
+    }
+
+    private fun string() {
+        while (peek() != '"' && !isAtEnd()) {
+            if (peek() == '\n') line++
+            advance()
+        }
+        if (isAtEnd()) {
+            GwanLang.error(line, "Unterminated string.")
+            return
+        }
+        advance() // 닫는 " 소비
+        val value = source.substring(start + 1, current - 1)
+        addToken(TokenType.STRING, value)
     }
 
     private fun isAtEnd(): Boolean = current >= source.length

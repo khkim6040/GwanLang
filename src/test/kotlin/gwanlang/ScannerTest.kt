@@ -1,9 +1,17 @@
 package gwanlang
 
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ScannerTest {
+
+    @BeforeEach
+    fun resetErrorState() {
+        GwanLang.hadError = false
+    }
 
     private fun scan(source: String): List<Token> = Scanner(source).scanTokens()
 
@@ -128,6 +136,41 @@ class ScannerTest {
 
         assertEquals(TokenType.PLUS, tokens[0].type)
         assertEquals(2, tokens[0].line)
+    }
+
+    @Test
+    fun `문자열 리터럴을 스캔한다`() {
+        val tokens = scan("\"hello\"")
+
+        assertEquals(TokenType.STRING, tokens[0].type)
+        assertEquals("\"hello\"", tokens[0].lexeme)
+        assertEquals("hello", tokens[0].literal)
+        assertFalse(GwanLang.hadError)
+    }
+
+    @Test
+    fun `빈 문자열 리터럴`() {
+        val tokens = scan("\"\"")
+
+        assertEquals(TokenType.STRING, tokens[0].type)
+        assertEquals("", tokens[0].literal)
+    }
+
+    @Test
+    fun `여러 줄에 걸친 문자열은 개행도 포함한다`() {
+        val tokens = scan("\"a\nb\"")
+
+        assertEquals(TokenType.STRING, tokens[0].type)
+        assertEquals("a\nb", tokens[0].literal)
+        assertEquals(2, tokens[0].line) // 시작 줄이 아닌 완료 시점 줄
+    }
+
+    @Test
+    fun `미종료 문자열은 에러를 기록한다`() {
+        val tokens = scan("\"no end")
+
+        assertTrue(GwanLang.hadError)
+        assertEquals(TokenType.EOF, tokens.last().type)
     }
 
     @Test

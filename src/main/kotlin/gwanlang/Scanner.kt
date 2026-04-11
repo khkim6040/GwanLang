@@ -27,6 +27,14 @@ class Scanner(private val source: String) {
             '+' -> addToken(TokenType.PLUS)
             ';' -> addToken(TokenType.SEMICOLON)
             '*' -> addToken(TokenType.STAR)
+            '/' -> {
+                if (peek() == '/') {
+                    // 단일 라인 주석: 개행 직전까지 소비
+                    while (peek() != '\n' && !isAtEnd()) advance()
+                } else {
+                    addToken(TokenType.SLASH)
+                }
+            }
             // 그 외 문자는 다음 사이클에서 처리 (연산자/공백/리터럴/식별자/에러)
         }
     }
@@ -34,6 +42,8 @@ class Scanner(private val source: String) {
     private fun isAtEnd(): Boolean = current >= source.length
 
     private fun advance(): Char = source[current++]
+
+    private fun peek(): Char = if (isAtEnd()) '\u0000' else source[current]
 
     private fun addToken(type: TokenType, literal: Any? = null) {
         val lexeme = source.substring(start, current)

@@ -41,6 +41,32 @@ class ScannerTest {
     }
 
     @Test
+    fun `슬래시는 SLASH 토큰이다`() {
+        val tokens = scan("/")
+
+        assertEquals(TokenType.SLASH, tokens[0].type)
+        assertEquals("/", tokens[0].lexeme)
+        assertEquals(TokenType.EOF, tokens[1].type)
+    }
+
+    @Test
+    fun `단일 라인 주석은 개행까지 무시된다`() {
+        val tokens = scan("// this is a comment")
+
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.EOF, tokens[0].type)
+    }
+
+    @Test
+    fun `주석은 개행에서 종료되고 이후 토큰을 스캔한다`() {
+        // 참고: 개행에 따른 line 증가는 Cycle 6(공백/줄번호)에서 테스트한다.
+        val tokens = scan("// comment\n+")
+
+        assertEquals(TokenType.PLUS, tokens[0].type)
+        assertEquals(TokenType.EOF, tokens[1].type)
+    }
+
+    @Test
     fun `연속된 단일 문자 토큰을 순서대로 스캔한다`() {
         val tokens = scan("(){},.-+;*")
 

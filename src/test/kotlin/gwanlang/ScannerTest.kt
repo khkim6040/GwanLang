@@ -211,6 +211,27 @@ class ScannerTest {
     }
 
     @Test
+    fun `식별자를 스캔한다`() {
+        val cases = listOf("foo", "_bar", "abc123", "camelCase", "snake_case")
+        for (name in cases) {
+            val tokens = scan(name)
+            assertEquals(TokenType.IDENTIFIER, tokens[0].type, "input='$name'")
+            assertEquals(name, tokens[0].lexeme, "input='$name'")
+        }
+    }
+
+    @Test
+    fun `숫자로 시작하는 식별자는 허용되지 않는다`() {
+        // 123abc → NUMBER(123) + IDENTIFIER(abc)
+        val tokens = scan("123abc")
+
+        assertEquals(TokenType.NUMBER, tokens[0].type)
+        assertEquals(123.0, tokens[0].literal)
+        assertEquals(TokenType.IDENTIFIER, tokens[1].type)
+        assertEquals("abc", tokens[1].lexeme)
+    }
+
+    @Test
     fun `연속된 단일 문자 토큰을 순서대로 스캔한다`() {
         val tokens = scan("(){},.-+;*")
 

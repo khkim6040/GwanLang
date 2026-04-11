@@ -16,34 +16,38 @@ class Scanner(private val source: String) {
     }
 
     private fun scanToken() {
-        when (advance()) {
-            '(' -> addToken(TokenType.LEFT_PAREN)
-            ')' -> addToken(TokenType.RIGHT_PAREN)
-            '{' -> addToken(TokenType.LEFT_BRACE)
-            '}' -> addToken(TokenType.RIGHT_BRACE)
-            ',' -> addToken(TokenType.COMMA)
-            '.' -> addToken(TokenType.DOT)
-            '-' -> addToken(TokenType.MINUS)
-            '+' -> addToken(TokenType.PLUS)
-            ';' -> addToken(TokenType.SEMICOLON)
-            '*' -> addToken(TokenType.STAR)
-            '!' -> addToken(if (match('=')) TokenType.BANG_EQUAL else TokenType.BANG)
-            '=' -> addToken(if (match('=')) TokenType.EQUAL_EQUAL else TokenType.EQUAL)
-            '>' -> addToken(if (match('=')) TokenType.GREATER_EQUAL else TokenType.GREATER)
-            '<' -> addToken(if (match('=')) TokenType.LESS_EQUAL else TokenType.LESS)
-            '/' -> {
-                if (peek() == '/') {
-                    // 단일 라인 주석: 개행 직전까지 소비
-                    while (peek() != '\n' && !isAtEnd()) advance()
-                } else {
-                    addToken(TokenType.SLASH)
-                }
-            }
-            ' ', '\r', '\t' -> { /* 공백 무시 */ }
-            '\n' -> line++
-            '"' -> string()
-            in '0'..'9' -> number()
-            // 식별자/에러는 다음 사이클에서 처리
+        val c = advance()
+        when {
+            c == '(' -> addToken(TokenType.LEFT_PAREN)
+            c == ')' -> addToken(TokenType.RIGHT_PAREN)
+            c == '{' -> addToken(TokenType.LEFT_BRACE)
+            c == '}' -> addToken(TokenType.RIGHT_BRACE)
+            c == ',' -> addToken(TokenType.COMMA)
+            c == '.' -> addToken(TokenType.DOT)
+            c == '-' -> addToken(TokenType.MINUS)
+            c == '+' -> addToken(TokenType.PLUS)
+            c == ';' -> addToken(TokenType.SEMICOLON)
+            c == '*' -> addToken(TokenType.STAR)
+            c == '!' -> addToken(if (match('=')) TokenType.BANG_EQUAL else TokenType.BANG)
+            c == '=' -> addToken(if (match('=')) TokenType.EQUAL_EQUAL else TokenType.EQUAL)
+            c == '>' -> addToken(if (match('=')) TokenType.GREATER_EQUAL else TokenType.GREATER)
+            c == '<' -> addToken(if (match('=')) TokenType.LESS_EQUAL else TokenType.LESS)
+            c == '/' -> slashOrComment()
+            c == ' ' || c == '\r' || c == '\t' -> { /* 공백 무시 */ }
+            c == '\n' -> line++
+            c == '"' -> string()
+            isDigit(c) -> number()
+            isAlpha(c) -> identifier()
+            // 에러는 Cycle 11에서 처리
+        }
+    }
+
+    private fun slashOrComment() {
+        if (peek() == '/') {
+            // 단일 라인 주석: 개행 직전까지 소비
+            while (peek() != '\n' && !isAtEnd()) advance()
+        } else {
+            addToken(TokenType.SLASH)
         }
     }
 
@@ -71,7 +75,17 @@ class Scanner(private val source: String) {
         addToken(TokenType.NUMBER, value)
     }
 
+    private fun identifier() {
+        while (isAlphaNumeric(peek())) advance()
+        addToken(TokenType.IDENTIFIER)
+    }
+
     private fun isDigit(c: Char): Boolean = c in '0'..'9'
+
+    private fun isAlpha(c: Char): Boolean =
+        c in 'a'..'z' || c in 'A'..'Z' || c == '_'
+
+    private fun isAlphaNumeric(c: Char): Boolean = isAlpha(c) || isDigit(c)
 
     private fun isAtEnd(): Boolean = current >= source.length
 

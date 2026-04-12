@@ -95,7 +95,9 @@ data class Token(
   - `STRING` → `String` (따옴표 제외한 내용)
   - `NUMBER` → `Double`
   - 그 외 → `null`
-- `line`: 토큰이 시작된 줄 번호 (1-based)
+- `line`: 토큰이 `addToken(...)`으로 기록되는 시점의 줄 번호 (1-based)
+  - 대부분의 토큰은 시작 줄과 동일하다.
+  - 여러 줄에 걸친 문자열 토큰은 종료 줄 번호가 저장된다.
 
 ### 4.3 `Scanner`
 
@@ -238,7 +240,7 @@ CLAUDE.md의 커밋 granularity 규칙에 맞춰 아래 단위로 커밋한다.
 1. `feat: TokenType enum 및 Token data class 추가`
 2. `feat: Scanner 골격 + 빈 입력/EOF 처리`
 3. `feat: 단일 문자 토큰 스캔`
-4. `feat: `/` 연산자 및 단일 라인 주석 처리`
+4. ``feat: `/` 연산자 및 단일 라인 주석 처리``
 5. `feat: 1~2 문자 비교/대입 연산자 스캔`
 6. `feat: 공백 skip 및 줄 번호 추적`
 7. `feat: 문자열 리터럴 스캔 + 미종료 에러`

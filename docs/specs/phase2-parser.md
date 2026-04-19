@@ -272,18 +272,18 @@ private fun run(source: String) {
 
 ## 6. 완료 기준 (Definition of Done)
 
-- [ ] `Expr` sealed class 4종 정의 및 테스트
-- [ ] `Parser` 클래스 — 전체 표현식 문법 파싱
-- [ ] 연산자 우선순위 올바른 AST 생성
-- [ ] 좌결합 이항 연산자 확인
-- [ ] 파싱 에러 시 줄 번호 + 토큰 위치 포함 에러 메시지
-- [ ] `AstPrinter` S-expression 출력
-- [ ] `GwanLang.kt` 파이프라인 연결 (REPL에서 표현식 → AST 출력)
-- [ ] `./gradlew build` 성공
-- [ ] `./gradlew test` 전체 통과
-- [ ] `examples/parser-demo.gwan` 정상 동작
-- [ ] `docs/CHANGELOG.md`에 Phase 2 완료 항목 추가
-- [ ] `GWANLANG_SPEC.md` §6 진행 추적표 업데이트
+- [x] `Expr` sealed class 4종 정의 및 테스트
+- [x] `Parser` 클래스 — 전체 표현식 문법 파싱
+- [x] 연산자 우선순위 올바른 AST 생성
+- [x] 좌결합 이항 연산자 확인
+- [x] 파싱 에러 시 줄 번호 + 토큰 위치 포함 에러 메시지
+- [x] `AstPrinter` S-expression 출력
+- [x] `GwanLang.kt` 파이프라인 연결 (REPL에서 표현식 → AST 출력)
+- [x] `./gradlew build` 성공
+- [x] `./gradlew test` 전체 통과
+- [x] `examples/parser-demo.gwan` 정상 동작
+- [x] `docs/CHANGELOG.md`에 Phase 2 완료 항목 추가
+- [x] `GWANLANG_SPEC.md` §6 진행 추적표 업데이트
 
 ## 7. 작업 분해 (권장 커밋 단위)
 

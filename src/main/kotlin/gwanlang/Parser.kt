@@ -11,7 +11,47 @@ class Parser(private val tokens: List<Token>) {
         }
     }
 
-    private fun expression(): Expr = unary()
+    private fun expression(): Expr = equality()
+
+    private fun equality(): Expr {
+        var expr = comparison()
+        while (match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
+            val op = previous()
+            val right = comparison()
+            expr = Expr.Binary(expr, op, right)
+        }
+        return expr
+    }
+
+    private fun comparison(): Expr {
+        var expr = term()
+        while (match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)) {
+            val op = previous()
+            val right = term()
+            expr = Expr.Binary(expr, op, right)
+        }
+        return expr
+    }
+
+    private fun term(): Expr {
+        var expr = factor()
+        while (match(TokenType.MINUS, TokenType.PLUS)) {
+            val op = previous()
+            val right = factor()
+            expr = Expr.Binary(expr, op, right)
+        }
+        return expr
+    }
+
+    private fun factor(): Expr {
+        var expr = unary()
+        while (match(TokenType.SLASH, TokenType.STAR)) {
+            val op = previous()
+            val right = unary()
+            expr = Expr.Binary(expr, op, right)
+        }
+        return expr
+    }
 
     private fun unary(): Expr {
         if (match(TokenType.BANG, TokenType.MINUS)) {

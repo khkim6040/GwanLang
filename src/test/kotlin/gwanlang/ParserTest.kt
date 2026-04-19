@@ -85,4 +85,72 @@ class ParserTest {
         assertIs<Expr.Unary>(inner)
         assertEquals(TokenType.BANG, inner.op.type)
     }
+
+    // --- 사이클 4: factor (*, /) ---
+
+    @Test
+    fun `곱셈을 파싱한다`() {
+        val expr = parse("2 * 3")
+        assertIs<Expr.Binary>(expr)
+        assertEquals(TokenType.STAR, expr.op.type)
+        assertEquals(2.0, (expr.left as Expr.Literal).value)
+        assertEquals(3.0, (expr.right as Expr.Literal).value)
+    }
+
+    @Test
+    fun `나눗셈을 파싱한다`() {
+        val expr = parse("6 / 2")
+        assertIs<Expr.Binary>(expr)
+        assertEquals(TokenType.SLASH, expr.op.type)
+    }
+
+    // --- 사이클 5: term (+, -) ---
+
+    @Test
+    fun `덧셈을 파싱한다`() {
+        val expr = parse("1 + 2")
+        assertIs<Expr.Binary>(expr)
+        assertEquals(TokenType.PLUS, expr.op.type)
+        assertEquals(1.0, (expr.left as Expr.Literal).value)
+        assertEquals(2.0, (expr.right as Expr.Literal).value)
+    }
+
+    @Test
+    fun `뺄셈을 파싱한다`() {
+        val expr = parse("5 - 3")
+        assertIs<Expr.Binary>(expr)
+        assertEquals(TokenType.MINUS, expr.op.type)
+    }
+
+    // --- 사이클 6: comparison (>, >=, <, <=) ---
+
+    @Test
+    fun `비교 연산자를 파싱한다`() {
+        val expr = parse("1 < 2")
+        assertIs<Expr.Binary>(expr)
+        assertEquals(TokenType.LESS, expr.op.type)
+    }
+
+    @Test
+    fun `크거나 같음 연산자를 파싱한다`() {
+        val expr = parse("3 >= 3")
+        assertIs<Expr.Binary>(expr)
+        assertEquals(TokenType.GREATER_EQUAL, expr.op.type)
+    }
+
+    // --- 사이클 7: equality (==, !=) ---
+
+    @Test
+    fun `동등 연산자를 파싱한다`() {
+        val expr = parse("1 == 1")
+        assertIs<Expr.Binary>(expr)
+        assertEquals(TokenType.EQUAL_EQUAL, expr.op.type)
+    }
+
+    @Test
+    fun `부등 연산자를 파싱한다`() {
+        val expr = parse("\"a\" != \"b\"")
+        assertIs<Expr.Binary>(expr)
+        assertEquals(TokenType.BANG_EQUAL, expr.op.type)
+    }
 }

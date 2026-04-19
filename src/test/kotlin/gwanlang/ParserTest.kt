@@ -201,4 +201,24 @@ class ParserTest {
         assertEquals(1.0, (left.left as Expr.Literal).value)
         assertEquals(2.0, (left.right as Expr.Literal).value)
     }
+
+    // --- 사이클 10: 에러 처리 ---
+
+    @Test
+    fun `닫히지 않은 괄호는 null을 반환한다`() {
+        val expr = parse("(1 + 2")
+        assertNull(expr)
+    }
+
+    @Test
+    fun `예상치 못한 토큰은 null을 반환한다`() {
+        val expr = parse("+")
+        assertNull(expr)
+    }
+
+    @Test
+    fun `빈 입력은 null을 반환한다`() {
+        val expr = parse("")
+        assertNull(expr)
+    }
 }

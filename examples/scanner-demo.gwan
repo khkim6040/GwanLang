@@ -1,0 +1,22 @@
+// Phase 1 Scanner 시연용 예제
+// 단일 문자, 연산자, 리터럴, 식별자, 키워드를 모두 포함한다
+
+var greeting = "Hello, GwanLang!";
+print greeting;
+
+var x = 1 + 2 * 3;
+if (x >= 7) {
+  print "big";
+} else {
+  print "small";
+}
+
+fun add(a, b) {
+  return a + b;
+}
+
+class Animal {
+  speak() {
+    print "sound";
+  }
+}

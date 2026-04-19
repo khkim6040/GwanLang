@@ -153,4 +153,52 @@ class ParserTest {
         assertIs<Expr.Binary>(expr)
         assertEquals(TokenType.BANG_EQUAL, expr.op.type)
     }
+
+    // --- 사이클 8: 그룹화 ---
+
+    @Test
+    fun `괄호 그룹을 파싱한다`() {
+        val expr = parse("(1 + 2)")
+        assertIs<Expr.Grouping>(expr)
+        val inner = expr.expression
+        assertIs<Expr.Binary>(inner)
+        assertEquals(TokenType.PLUS, inner.op.type)
+    }
+
+    // --- 사이클 9: 우선순위 및 결합 ---
+
+    @Test
+    fun `곱셈이 덧셈보다 우선순위가 높다`() {
+        // 1 + 2 * 3 → Binary(1, +, Binary(2, *, 3))
+        val expr = parse("1 + 2 * 3")
+        assertIs<Expr.Binary>(expr)
+        assertEquals(TokenType.PLUS, expr.op.type)
+        assertIs<Expr.Literal>(expr.left)
+        val right = expr.right
+        assertIs<Expr.Binary>(right)
+        assertEquals(TokenType.STAR, right.op.type)
+    }
+
+    @Test
+    fun `괄호가 우선순위를 변경한다`() {
+        // (1 + 2) * 3 → Binary(Grouping(Binary(1, +, 2)), *, 3)
+        val expr = parse("(1 + 2) * 3")
+        assertIs<Expr.Binary>(expr)
+        assertEquals(TokenType.STAR, expr.op.type)
+        assertIs<Expr.Grouping>(expr.left)
+    }
+
+    @Test
+    fun `이항 연산자는 좌결합이다`() {
+        // 1 - 2 - 3 → Binary(Binary(1, -, 2), -, 3)
+        val expr = parse("1 - 2 - 3")
+        assertIs<Expr.Binary>(expr)
+        assertEquals(TokenType.MINUS, expr.op.type)
+        assertEquals(3.0, (expr.right as Expr.Literal).value)
+        val left = expr.left
+        assertIs<Expr.Binary>(left)
+        assertEquals(TokenType.MINUS, left.op.type)
+        assertEquals(1.0, (left.left as Expr.Literal).value)
+        assertEquals(2.0, (left.right as Expr.Literal).value)
+    }
 }

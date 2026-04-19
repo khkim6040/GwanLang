@@ -71,6 +71,12 @@ class Parser(private val tokens: List<Token>) {
             return Expr.Literal(previous().literal)
         }
 
+        if (match(TokenType.LEFT_PAREN)) {
+            val expr = expression()
+            consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
+            return Expr.Grouping(expr)
+        }
+
         throw error(peek(), "Expect expression.")
     }
 

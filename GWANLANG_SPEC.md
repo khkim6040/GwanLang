@@ -143,11 +143,11 @@ primary        → NUMBER | STRING | "true" | "false" | "nil" | "this"
 - `String` → Kotlin `String`
 
 **완료 기준:**
-- [ ] 산술/비교/논리 연산 평가
-- [ ] 런타임 타입 에러 처리
-- [ ] Truthiness 규칙: `nil`, `false` → falsy, 나머지 → truthy
-- [ ] 문자열 연결 (`+`)
-- [ ] 테스트: REPL에서 표현식 평가
+- [x] 산술/비교/논리 연산 평가
+- [x] 런타임 타입 에러 처리
+- [x] Truthiness 규칙: `nil`, `false` → falsy, 나머지 → truthy
+- [x] 문자열 연결 (`+`)
+- [x] 테스트: REPL에서 표현식 평가
 
 ---
 

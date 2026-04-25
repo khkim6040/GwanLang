@@ -25,7 +25,7 @@ class Interpreter {
                     -(right as Double)
                 }
                 TokenType.BANG -> !isTruthy(right)
-                else -> null
+                else -> throw IllegalStateException("Unknown unary operator: ${expr.op.type}")
             }
         }
         is Expr.Binary -> {
@@ -70,7 +70,7 @@ class Interpreter {
                 }
                 TokenType.EQUAL_EQUAL -> isEqual(left, right)
                 TokenType.BANG_EQUAL -> !isEqual(left, right)
-                else -> null
+                else -> throw IllegalStateException("Unknown binary operator: ${expr.op.type}")
             }
         }
     }

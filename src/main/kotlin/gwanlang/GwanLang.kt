@@ -77,5 +77,6 @@ private fun run(source: String) {
     val parser = Parser(tokens)
     val expression = parser.parse()
     if (GwanLang.hadError) return
-    Interpreter().interpret(expression!!)
+    val expr = expression ?: return
+    Interpreter().interpret(expr)
 }

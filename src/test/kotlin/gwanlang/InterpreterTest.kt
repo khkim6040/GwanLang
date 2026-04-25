@@ -173,4 +173,80 @@ class InterpreterTest {
     fun `boolean과 숫자를 더하면 RuntimeError`() {
         assertThrows<RuntimeError> { evaluate("true + 1") }
     }
+
+    // --- 사이클 10: 비교 연산 ---
+
+    @Test
+    fun `작다 비교를 평가한다`() {
+        assertEquals(true, evaluate("1 < 2"))
+    }
+
+    @Test
+    fun `크거나 같다 비교를 평가한다`() {
+        assertEquals(true, evaluate("3 >= 3"))
+    }
+
+    @Test
+    fun `크다 비교를 평가한다`() {
+        assertEquals(false, evaluate("1 > 2"))
+    }
+
+    @Test
+    fun `작거나 같다 비교를 평가한다`() {
+        assertEquals(true, evaluate("2 <= 2"))
+    }
+
+    @Test
+    fun `비교 연산에 문자열을 넣으면 RuntimeError`() {
+        assertThrows<RuntimeError> { evaluate("\"a\" < 1") }
+    }
+
+    // --- 사이클 11: 동등 비교 ---
+
+    @Test
+    fun `같은 숫자는 동등하다`() {
+        assertEquals(true, evaluate("1 == 1"))
+    }
+
+    @Test
+    fun `다른 숫자는 동등하지 않다`() {
+        assertEquals(true, evaluate("1 != 2"))
+    }
+
+    @Test
+    fun `nil은 nil과 동등하다`() {
+        assertEquals(true, evaluate("nil == nil"))
+    }
+
+    @Test
+    fun `nil은 숫자와 동등하지 않다`() {
+        assertEquals(false, evaluate("nil == 0"))
+    }
+
+    @Test
+    fun `타입이 다르면 동등하지 않다`() {
+        assertEquals(false, evaluate("1 == \"1\""))
+    }
+
+    @Test
+    fun `같은 문자열은 동등하다`() {
+        assertEquals(true, evaluate("\"abc\" == \"abc\""))
+    }
+
+    // --- 사이클 12: Truthiness ---
+
+    @Test
+    fun `0은 truthy이다`() {
+        assertEquals(false, evaluate("!0"))
+    }
+
+    @Test
+    fun `빈 문자열은 truthy이다`() {
+        assertEquals(false, evaluate("!\"\""))
+    }
+
+    @Test
+    fun `nil은 falsy이다`() {
+        assertEquals(true, evaluate("!nil"))
+    }
 }

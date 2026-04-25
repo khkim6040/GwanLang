@@ -190,13 +190,13 @@ object GwanLang {
 - 파일 실행 시 `hadError == true`이면 종료 코드 65 반환.
 - REPL은 에러 후 `hadError = false`로 리셋하고 다음 입력 대기.
 
-### 4.7 진입점 (`GwanLang.kt`, Phase 1 수준)
+### 4.7 진입점 (`GwanLang.kt`, Phase 1 당시 구현 기준)
 
 - `main(args)`:
   - `args.size > 1` → usage 출력
   - `args.size == 1` → `runFile(args[0])`
   - `args.isEmpty()` → `runPrompt()` (REPL)
-- `run(source)`: `Scanner(source).scanTokens()` → 토큰 각각 `println`
+- `run(source)`: Phase 1 당시 구현에서는 `Scanner(source).scanTokens()` 결과인 토큰들을 각각 `println`
 
 ## 5. 테스트 계획 (TDD 사이클)
 

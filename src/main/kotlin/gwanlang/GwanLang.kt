@@ -10,11 +10,11 @@ import kotlin.system.exitProcess
 /**
  * GwanLang 인터프리터의 전역 에러 채널.
  *
- * Phase 2 수준: Scanner → Parser → AstPrinter 파이프라인.
- * 인터프리터는 Phase 3에서 추가된다.
+ * Phase 3 수준: Scanner → Parser → Interpreter 파이프라인.
  */
 object GwanLang {
     var hadError: Boolean = false
+    var hadRuntimeError: Boolean = false
 
     fun error(line: Int, message: String) {
         report(line, "", message)
@@ -26,6 +26,11 @@ object GwanLang {
         } else {
             report(token.line, " at '${token.lexeme}'", message)
         }
+    }
+
+    fun runtimeError(error: RuntimeError) {
+        System.err.println("[line ${error.token.line}] RuntimeError: ${error.message}")
+        hadRuntimeError = true
     }
 
     private fun report(line: Int, where: String, message: String) {
@@ -52,6 +57,7 @@ private fun runFile(path: String) {
     val source = Files.readString(Paths.get(path), StandardCharsets.UTF_8)
     run(source)
     if (GwanLang.hadError) exitProcess(65)
+    if (GwanLang.hadRuntimeError) exitProcess(70)
 }
 
 private fun runPrompt() {
@@ -61,6 +67,7 @@ private fun runPrompt() {
         val line = reader.readLine() ?: break
         run(line)
         GwanLang.hadError = false
+        GwanLang.hadRuntimeError = false
     }
 }
 
@@ -69,7 +76,7 @@ private fun run(source: String) {
     val tokens = scanner.scanTokens()
     val parser = Parser(tokens)
     val expression = parser.parse()
-
     if (GwanLang.hadError) return
-    println(AstPrinter().print(expression!!))
+    val expr = expression ?: return
+    Interpreter().interpret(expr)
 }

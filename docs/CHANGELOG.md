@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 
+### Phase 3: Evaluator — 표현식 평가
+- `Interpreter` 클래스 — `when` 표현식 기반 Tree-walking 평가기
+  - 산술 연산: `+`, `-`, `*`, `/`
+  - 비교 연산: `>`, `>=`, `<`, `<=`
+  - 동등 연산: `==`, `!=`
+  - 단항 연산: `-` (부호 반전), `!` (논리 부정)
+  - 문자열 연결: `+` (양쪽 모두 String일 때)
+  - Truthiness: `nil`, `false`만 falsy
+- `RuntimeError` 예외 클래스 — 런타임 타입 에러 리포팅
+  - 0으로 나누기 RuntimeError
+  - 타입 불일치 RuntimeError (줄 번호 포함)
+- `GwanLang.kt` 파이프라인 변경: Scanner → Parser → Interpreter
+  - `runtimeError()` 메서드, `hadRuntimeError` 플래그, exit code 70
+  - REPL에서 `hadRuntimeError` 리셋
+- `examples/evaluator-demo.gwan` — 표현식 평가 시연 예제
+- 테스트: `InterpreterTest` — TDD 사이클 14개 기반
+
 ### Phase 2: Parser (표현식) — 구문 분석
 - `Expr` sealed class — 4종 (Binary, Grouping, Literal, Unary)
 - `Parser` 클래스 — Recursive Descent 방식 표현식 파싱

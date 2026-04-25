@@ -249,4 +249,45 @@ class InterpreterTest {
     fun `nil은 falsy이다`() {
         assertEquals(true, evaluate("!nil"))
     }
+
+    // --- 사이클 13: stringify ---
+
+    private fun interpretAndCapture(source: String): String {
+        val tokens = Scanner(source).scanTokens()
+        val expr = Parser(tokens).parse()!!
+        val output = java.io.ByteArrayOutputStream()
+        val originalOut = System.out
+        System.setOut(java.io.PrintStream(output))
+        try {
+            Interpreter().interpret(expr)
+        } finally {
+            System.setOut(originalOut)
+        }
+        return output.toString().trim()
+    }
+
+    @Test
+    fun `정수 Double은 소수점 없이 출력된다`() {
+        assertEquals("2", interpretAndCapture("1 + 1"))
+    }
+
+    @Test
+    fun `소수 Double은 소수점과 함께 출력된다`() {
+        assertEquals("3.14", interpretAndCapture("3.14"))
+    }
+
+    @Test
+    fun `nil은 nil로 출력된다`() {
+        assertEquals("nil", interpretAndCapture("nil"))
+    }
+
+    @Test
+    fun `true는 true로 출력된다`() {
+        assertEquals("true", interpretAndCapture("true"))
+    }
+
+    @Test
+    fun `문자열은 그대로 출력된다`() {
+        assertEquals("hello", interpretAndCapture("\"hello\""))
+    }
 }

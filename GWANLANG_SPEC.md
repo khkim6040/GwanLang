@@ -322,7 +322,7 @@ class Environment(val enclosing: Environment? = null) {
 | Phase | 상태 | 시작일 | 완료일 | 비고 |
 |-------|------|--------|--------|------|
 | 1. Scanner | ✅ 완료 | 2026-04-11 | 2026-04-11 | TDD 사이클 12개, 테스트 26건 |
-| 2. Parser | ⬜ 미시작 | | | |
+| 2. Parser | ✅ 완료 | 2026-04-19 | 2026-04-19 | 표현식 전용, TDD 사이클 12개 |
 | 3. Evaluator | ⬜ 미시작 | | | |
 | 4. Statements | ⬜ 미시작 | | | |
 | 5. Functions | ⬜ 미시작 | | | |

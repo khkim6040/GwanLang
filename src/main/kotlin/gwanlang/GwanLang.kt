@@ -10,14 +10,22 @@ import kotlin.system.exitProcess
 /**
  * GwanLang 인터프리터의 전역 에러 채널.
  *
- * Phase 1 수준: Scanner 결과 출력까지.
- * 파서/인터프리터는 이후 Phase에서 추가된다.
+ * Phase 2 수준: Scanner → Parser → AstPrinter 파이프라인.
+ * 인터프리터는 Phase 3에서 추가된다.
  */
 object GwanLang {
     var hadError: Boolean = false
 
     fun error(line: Int, message: String) {
         report(line, "", message)
+    }
+
+    fun error(token: Token, message: String) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, " at end", message)
+        } else {
+            report(token.line, " at '${token.lexeme}'", message)
+        }
     }
 
     private fun report(line: Int, where: String, message: String) {
@@ -59,7 +67,9 @@ private fun runPrompt() {
 private fun run(source: String) {
     val scanner = Scanner(source)
     val tokens = scanner.scanTokens()
-    for (token in tokens) {
-        println(token)
-    }
+    val parser = Parser(tokens)
+    val expression = parser.parse()
+
+    if (GwanLang.hadError) return
+    println(AstPrinter().print(expression!!))
 }

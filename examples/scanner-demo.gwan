@@ -1,5 +1,6 @@
 // Phase 1 Scanner 시연용 예제
 // 단일 문자, 연산자, 리터럴, 식별자, 키워드를 모두 포함한다
+// 주의: 문장/선언 파싱은 Phase 4 이후 지원. 현재 파이프라인에서는 실행 불가.
 
 var greeting = "Hello, GwanLang!";
 print greeting;

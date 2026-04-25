@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### Phase 2: Parser (표현식) — 구문 분석
+- `Expr` sealed class — 4종 (Binary, Grouping, Literal, Unary)
+- `Parser` 클래스 — Recursive Descent 방식 표현식 파싱
+  - 6단계 우선순위: equality → comparison → term → factor → unary → primary
+  - 좌결합 이항 연산자, 우결합 단항 연산자
+  - 리터럴: 숫자, 문자열, true, false, nil
+  - 그룹화: `(expression)`
+  - 파싱 에러 시 토큰 위치 포함 에러 메시지 + null 반환
+- `AstPrinter` — S-expression 형식 AST 출력 (예: `(+ 1.0 (* 2.0 3.0))`)
+- `GwanLang.kt` 파이프라인 확장: Scanner → Parser → AstPrinter
+- `GwanLang.error(token, message)` 오버로드 추가
+- `examples/parser-demo.gwan` — 표현식 파싱 시연 예제
+- 테스트: `ExprTest`, `ParserTest`, `AstPrinterTest` — TDD 사이클 12개 기반
+
 ### Phase 1: Scanner (Lexer) — 토큰화
 - `TokenType` enum — 39종(단일 문자 11, 연산자 8, 리터럴 3, 키워드 16, EOF)
 - `Token` data class — type/lexeme/literal/line 필드

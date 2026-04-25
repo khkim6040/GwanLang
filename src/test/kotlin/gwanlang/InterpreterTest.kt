@@ -132,4 +132,45 @@ class InterpreterTest {
     fun `산술 연산에 boolean을 넣으면 RuntimeError`() {
         assertThrows<RuntimeError> { evaluate("true * 2") }
     }
+
+    // --- 사이클 7: 0으로 나누기 ---
+
+    @Test
+    fun `0으로 나누면 RuntimeError`() {
+        assertThrows<RuntimeError> { evaluate("1 / 0") }
+    }
+
+    @Test
+    fun `0점0으로 나누면 RuntimeError`() {
+        assertThrows<RuntimeError> { evaluate("1 / 0.0") }
+    }
+
+    // --- 사이클 8: 문자열 연결 ---
+
+    @Test
+    fun `문자열 두 개를 더하면 연결된다`() {
+        assertEquals("ab", evaluate("\"a\" + \"b\""))
+    }
+
+    @Test
+    fun `빈 문자열도 연결할 수 있다`() {
+        assertEquals("hello", evaluate("\"\" + \"hello\""))
+    }
+
+    // --- 사이클 9: + 타입 에러 ---
+
+    @Test
+    fun `숫자와 문자열을 더하면 RuntimeError`() {
+        assertThrows<RuntimeError> { evaluate("1 + \"a\"") }
+    }
+
+    @Test
+    fun `문자열과 숫자를 더하면 RuntimeError`() {
+        assertThrows<RuntimeError> { evaluate("\"a\" + 1") }
+    }
+
+    @Test
+    fun `boolean과 숫자를 더하면 RuntimeError`() {
+        assertThrows<RuntimeError> { evaluate("true + 1") }
+    }
 }

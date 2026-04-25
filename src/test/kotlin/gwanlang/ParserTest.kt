@@ -221,4 +221,16 @@ class ParserTest {
         val expr = parse("")
         assertNull(expr)
     }
+
+    @Test
+    fun `표현식 뒤에 불필요한 토큰이 있으면 null을 반환한다`() {
+        val expr = parse("1 2")
+        assertNull(expr)
+    }
+
+    @Test
+    fun `표현식 뒤에 닫는 괄호가 남으면 null을 반환한다`() {
+        val expr = parse("1 + 2 )")
+        assertNull(expr)
+    }
 }

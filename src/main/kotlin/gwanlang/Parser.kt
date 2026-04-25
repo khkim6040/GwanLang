@@ -5,7 +5,11 @@ class Parser(private val tokens: List<Token>) {
 
     fun parse(): Expr? {
         return try {
-            expression()
+            val expr = expression()
+            if (!isAtEnd()) {
+                throw error(peek(), "Expect end of expression.")
+            }
+            expr
         } catch (e: ParseError) {
             null
         }

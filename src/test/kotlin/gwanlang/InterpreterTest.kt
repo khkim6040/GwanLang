@@ -90,4 +90,46 @@ class InterpreterTest {
     fun `단항 마이너스에 문자열을 넣으면 RuntimeError`() {
         assertThrows<RuntimeError> { evaluate("-\"text\"") }
     }
+
+    // --- 사이클 6: 산술 이항 연산 ---
+
+    @Test
+    fun `덧셈을 평가한다`() {
+        assertEquals(3.0, evaluate("1 + 2"))
+    }
+
+    @Test
+    fun `뺄셈을 평가한다`() {
+        assertEquals(2.0, evaluate("5 - 3"))
+    }
+
+    @Test
+    fun `곱셈을 평가한다`() {
+        assertEquals(6.0, evaluate("2 * 3"))
+    }
+
+    @Test
+    fun `나눗셈을 평가한다`() {
+        assertEquals(2.0, evaluate("6 / 3"))
+    }
+
+    @Test
+    fun `복합 산술을 평가한다`() {
+        assertEquals(7.0, evaluate("1 + 2 * 3"))
+    }
+
+    @Test
+    fun `좌결합 뺄셈을 평가한다`() {
+        assertEquals(5.0, evaluate("10 - 3 - 2"))
+    }
+
+    @Test
+    fun `산술 연산에 문자열을 넣으면 RuntimeError`() {
+        assertThrows<RuntimeError> { evaluate("1 - \"a\"") }
+    }
+
+    @Test
+    fun `산술 연산에 boolean을 넣으면 RuntimeError`() {
+        assertThrows<RuntimeError> { evaluate("true * 2") }
+    }
 }

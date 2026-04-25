@@ -290,4 +290,26 @@ class InterpreterTest {
     fun `문자열은 그대로 출력된다`() {
         assertEquals("hello", interpretAndCapture("\"hello\""))
     }
+
+    // --- 사이클 14: GwanLang 통합 ---
+
+    @Test
+    fun `런타임 에러는 stderr에 줄 번호와 함께 출력된다`() {
+        val errOutput = java.io.ByteArrayOutputStream()
+        val originalErr = System.err
+        System.setErr(java.io.PrintStream(errOutput))
+        val originalHadRuntimeError = GwanLang.hadRuntimeError
+        try {
+            val tokens = Scanner("-\"text\"").scanTokens()
+            val expr = Parser(tokens).parse()!!
+            Interpreter().interpret(expr)
+            val errorMsg = errOutput.toString().trim()
+            assert(errorMsg.contains("line 1")) { "에러에 줄 번호가 포함되어야 한다: $errorMsg" }
+            assert(errorMsg.contains("Operand must be a number")) { "에러 메시지가 포함되어야 한다: $errorMsg" }
+            assert(GwanLang.hadRuntimeError) { "hadRuntimeError가 true여야 한다" }
+        } finally {
+            System.setErr(originalErr)
+            GwanLang.hadRuntimeError = originalHadRuntimeError
+        }
+    }
 }

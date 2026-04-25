@@ -3,8 +3,12 @@ package gwanlang
 class Interpreter {
 
     fun interpret(expression: Expr) {
-        val value = evaluate(expression)
-        println(stringify(value))
+        try {
+            val value = evaluate(expression)
+            println(stringify(value))
+        } catch (error: RuntimeError) {
+            GwanLang.runtimeError(error)
+        }
     }
 
     /** 테스트용 — evaluate를 외부에서 직접 호출 */

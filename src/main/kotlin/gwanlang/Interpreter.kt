@@ -13,8 +13,29 @@ class Interpreter {
     private fun evaluate(expr: Expr): Any? = when (expr) {
         is Expr.Literal -> expr.value
         is Expr.Grouping -> evaluate(expr.expression)
-        is Expr.Unary -> TODO()
+        is Expr.Unary -> {
+            val right = evaluate(expr.right)
+            when (expr.op.type) {
+                TokenType.MINUS -> {
+                    checkNumberOperand(expr.op, right)
+                    -(right as Double)
+                }
+                TokenType.BANG -> !isTruthy(right)
+                else -> null
+            }
+        }
         is Expr.Binary -> TODO()
+    }
+
+    private fun isTruthy(value: Any?): Boolean {
+        if (value == null) return false
+        if (value is Boolean) return value
+        return true
+    }
+
+    private fun checkNumberOperand(op: Token, operand: Any?) {
+        if (operand is Double) return
+        throw RuntimeError(op, "Operand must be a number.")
     }
 
     private fun stringify(value: Any?): String {

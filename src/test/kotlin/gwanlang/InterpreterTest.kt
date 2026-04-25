@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class InterpreterTest {
 
@@ -304,9 +305,9 @@ class InterpreterTest {
             val expr = Parser(tokens).parse()!!
             Interpreter().interpret(expr)
             val errorMsg = errOutput.toString().trim()
-            assert(errorMsg.contains("line 1")) { "에러에 줄 번호가 포함되어야 한다: $errorMsg" }
-            assert(errorMsg.contains("Operand must be a number")) { "에러 메시지가 포함되어야 한다: $errorMsg" }
-            assert(GwanLang.hadRuntimeError) { "hadRuntimeError가 true여야 한다" }
+            assertTrue(errorMsg.contains("line 1"), "에러에 줄 번호가 포함되어야 한다: $errorMsg")
+            assertTrue(errorMsg.contains("Operand must be a number"), "에러 메시지가 포함되어야 한다: $errorMsg")
+            assertTrue(GwanLang.hadRuntimeError, "hadRuntimeError가 true여야 한다")
         } finally {
             System.setErr(originalErr)
             GwanLang.hadRuntimeError = originalHadRuntimeError

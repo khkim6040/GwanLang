@@ -195,7 +195,8 @@ private fun run(source: String) {
     val parser = Parser(tokens)
     val expression = parser.parse()
     if (GwanLang.hadError) return
-    Interpreter().interpret(expression!!)
+    val expr = expression ?: return
+    Interpreter().interpret(expr)
 }
 ```
 
@@ -276,24 +277,24 @@ fun interpret(expression: Expr) {
 
 ## 7. 완료 기준 (Definition of Done)
 
-- [ ] `RuntimeError` 예외 클래스 정의
-- [ ] `Interpreter` 클래스 — 모든 `Expr` 노드 평가
-- [ ] 산술 연산 (`+`, `-`, `*`, `/`) 정상 동작
-- [ ] 비교 연산 (`>`, `>=`, `<`, `<=`) 정상 동작
-- [ ] 동등 연산 (`==`, `!=`) 정상 동작 (타입 불일치 시 `false`)
-- [ ] 단항 연산 (`-`, `!`) 정상 동작
-- [ ] 문자열 연결 (`+`) 정상 동작
-- [ ] Truthiness 규칙 적용 (`nil`, `false`만 falsy)
-- [ ] 0으로 나누기 RuntimeError
-- [ ] 타입 에러 시 RuntimeError + 줄 번호 포함 메시지
-- [ ] `GwanLang.kt` 파이프라인 변경 (Interpreter 사용)
-- [ ] `hadRuntimeError` 플래그 및 exit code 70
-- [ ] REPL에서 표현식 평가 결과 출력
-- [ ] `./gradlew build` 성공
-- [ ] `./gradlew test` 전체 통과
-- [ ] `examples/evaluator-demo.gwan` 정상 동작
-- [ ] `docs/CHANGELOG.md`에 Phase 3 완료 항목 추가
-- [ ] `GWANLANG_SPEC.md` §6 진행 추적표 업데이트
+- [x] `RuntimeError` 예외 클래스 정의
+- [x] `Interpreter` 클래스 — 모든 `Expr` 노드 평가
+- [x] 산술 연산 (`+`, `-`, `*`, `/`) 정상 동작
+- [x] 비교 연산 (`>`, `>=`, `<`, `<=`) 정상 동작
+- [x] 동등 연산 (`==`, `!=`) 정상 동작 (타입 불일치 시 `false`)
+- [x] 단항 연산 (`-`, `!`) 정상 동작
+- [x] 문자열 연결 (`+`) 정상 동작
+- [x] Truthiness 규칙 적용 (`nil`, `false`만 falsy)
+- [x] 0으로 나누기 RuntimeError
+- [x] 타입 에러 시 RuntimeError + 줄 번호 포함 메시지
+- [x] `GwanLang.kt` 파이프라인 변경 (Interpreter 사용)
+- [x] `hadRuntimeError` 플래그 및 exit code 70
+- [x] REPL에서 표현식 평가 결과 출력
+- [x] `./gradlew build` 성공
+- [x] `./gradlew test` 전체 통과
+- [x] `examples/evaluator-demo.gwan` 정상 동작
+- [x] `docs/CHANGELOG.md`에 Phase 3 완료 항목 추가
+- [x] `GWANLANG_SPEC.md` §6 진행 추적표 업데이트
 
 ## 8. 작업 분해 (권장 커밋 단위)
 

@@ -12,7 +12,7 @@ class Interpreter {
     }
 
     /** 테스트용 — evaluate를 외부에서 직접 호출 */
-    fun testEvaluate(expr: Expr): Any? = evaluate(expr)
+    internal fun testEvaluate(expr: Expr): Any? = evaluate(expr)
 
     private fun evaluate(expr: Expr): Any? = when (expr) {
         is Expr.Literal -> expr.value
@@ -42,10 +42,12 @@ class Interpreter {
                 }
                 TokenType.SLASH -> {
                     checkNumberOperands(expr.op, left, right)
-                    if (right as Double == 0.0) {
+                    val leftNum = left as Double
+                    val rightNum = right as Double
+                    if (rightNum == 0.0) {
                         throw RuntimeError(expr.op, "Division by zero.")
                     }
-                    (left as Double) / right
+                    leftNum / rightNum
                 }
                 TokenType.PLUS -> {
                     if (left is Double && right is Double) left + right

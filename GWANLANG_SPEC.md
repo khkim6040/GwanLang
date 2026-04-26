@@ -155,13 +155,13 @@ primary        → NUMBER | STRING | "true" | "false" | "nil" | "this"
 **목표:** 변수 선언, 대입, 스코프, 제어 흐름 구현
 
 **완료 기준:**
-- [ ] Environment (스코프 체인) 구현
-- [ ] 변수 선언 / 대입
-- [ ] print 문
-- [ ] 블록 스코프 `{ ... }`
-- [ ] if / else
-- [ ] while / for 루프
-- [ ] 테스트: 피보나치 출력 등
+- [x] Environment (스코프 체인) 구현
+- [x] 변수 선언 / 대입
+- [x] print 문
+- [x] 블록 스코프 `{ ... }`
+- [x] if / else
+- [x] while / for 루프
+- [x] 테스트: 피보나치 출력 등
 
 ---
 

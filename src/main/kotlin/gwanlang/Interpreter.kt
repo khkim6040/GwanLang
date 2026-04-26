@@ -14,6 +14,16 @@ class Interpreter {
         }
     }
 
+    /** REPL용 — 표현식을 평가하여 값을 반환한다 */
+    fun interpretExpr(expr: Expr): Any? {
+        return try {
+            evaluate(expr)
+        } catch (error: RuntimeError) {
+            GwanLang.runtimeError(error)
+            null
+        }
+    }
+
     /** 테스트용 — evaluate를 외부에서 직접 호출 */
     internal fun testEvaluate(expr: Expr): Any? = evaluate(expr)
 
@@ -155,7 +165,7 @@ class Interpreter {
         throw RuntimeError(op, "Operand must be a number.")
     }
 
-    private fun stringify(value: Any?): String {
+    fun stringify(value: Any?): String {
         if (value == null) return "nil"
         if (value is Double) {
             val text = value.toString()

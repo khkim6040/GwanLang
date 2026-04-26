@@ -47,7 +47,7 @@ Phase 4가 끝나면 GwanLang은 변수와 제어 흐름을 갖춘 스크립트 
 | `Environment.kt` | 렉시컬 스코프 체인 (신규) |
 | `Parser.kt` | 문장/선언 파싱, for 디슈가링 (수정) |
 | `Interpreter.kt` | 문장 실행, Environment 사용 (수정) |
-| `GwanLang.kt` | `List<Stmt>` 파이프라인, REPL 표현식 자동 출력 (수정) |
+| `GwanLang.kt` | `List<Stmt>` 파이프라인, 전역 Interpreter 인스턴스 (수정) |
 
 ### 테스트 코드 (`src/test/kotlin/gwanlang/`)
 | 파일 | 내용 |

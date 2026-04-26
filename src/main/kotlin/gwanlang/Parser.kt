@@ -128,7 +128,7 @@ class Parser(private val tokens: List<Token>) {
                 return Expr.Assign(expr.name, value)
             }
 
-            error(equals, "Invalid assignment target.")
+            throw error(equals, "Invalid assignment target.")
         }
 
         return expr

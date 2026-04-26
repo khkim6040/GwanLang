@@ -67,17 +67,24 @@ private fun runPrompt() {
     while (true) {
         print("> ")
         val line = reader.readLine() ?: break
-        run(line)
+        run(line, repl = true)
         GwanLang.hadError = false
         GwanLang.hadRuntimeError = false
     }
 }
 
-private fun run(source: String) {
+private fun run(source: String, repl: Boolean = false) {
     val scanner = Scanner(source)
     val tokens = scanner.scanTokens()
     val parser = Parser(tokens)
     val statements = parser.parse()
     if (GwanLang.hadError) return
+
+    if (repl && statements.size == 1 && statements[0] is Stmt.Expression) {
+        val value = interpreter.interpretExpr((statements[0] as Stmt.Expression).expression)
+        if (value != null) println(interpreter.stringify(value))
+        return
+    }
+
     interpreter.interpret(statements)
 }

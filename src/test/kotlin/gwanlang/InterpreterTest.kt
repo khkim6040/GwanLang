@@ -307,7 +307,7 @@ class InterpreterTest {
         } finally {
             System.setOut(originalOut)
         }
-        return output.toString().trim()
+        return output.toString().trimEnd()
     }
 
     // --- 사이클 16: print 문 실행 ---

@@ -19,8 +19,9 @@ class InterpreterTest {
     }
 
     private fun evaluate(source: String): Any? {
-        val tokens = Scanner(source).scanTokens()
-        val expr = Parser(tokens).parse()!!
+        val tokens = Scanner("$source;").scanTokens()
+        val stmts = Parser(tokens).parse()
+        val expr = (stmts[0] as Stmt.Expression).expression
         return Interpreter().testEvaluate(expr)
     }
 
@@ -254,13 +255,13 @@ class InterpreterTest {
     // --- 사이클 13: stringify ---
 
     private fun interpretAndCapture(source: String): String {
-        val tokens = Scanner(source).scanTokens()
-        val expr = Parser(tokens).parse()!!
+        val tokens = Scanner("print $source;").scanTokens()
+        val stmts = Parser(tokens).parse()
         val output = java.io.ByteArrayOutputStream()
         val originalOut = System.out
         System.setOut(java.io.PrintStream(output))
         try {
-            Interpreter().interpret(expr)
+            Interpreter().interpret(stmts)
         } finally {
             System.setOut(originalOut)
         }
@@ -301,9 +302,9 @@ class InterpreterTest {
         System.setErr(java.io.PrintStream(errOutput))
         val originalHadRuntimeError = GwanLang.hadRuntimeError
         try {
-            val tokens = Scanner("-\"text\"").scanTokens()
-            val expr = Parser(tokens).parse()!!
-            Interpreter().interpret(expr)
+            val tokens = Scanner("-\"text\";").scanTokens()
+            val stmts = Parser(tokens).parse()
+            Interpreter().interpret(stmts)
             val errorMsg = errOutput.toString().trim()
             assertTrue(errorMsg.contains("line 1"), "에러에 줄 번호가 포함되어야 한다: $errorMsg")
             assertTrue(errorMsg.contains("Operand must be a number"), "에러 메시지가 포함되어야 한다: $errorMsg")

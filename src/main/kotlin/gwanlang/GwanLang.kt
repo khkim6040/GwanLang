@@ -10,7 +10,7 @@ import kotlin.system.exitProcess
 /**
  * GwanLang 인터프리터의 전역 에러 채널.
  *
- * Phase 3 수준: Scanner → Parser → Interpreter 파이프라인.
+ * Phase 4 수준: Scanner → Parser → Interpreter 파이프라인.
  */
 object GwanLang {
     var hadError: Boolean = false
@@ -42,6 +42,8 @@ object GwanLang {
 /**
  * 진입점 — 인자가 있으면 파일 실행, 없으면 REPL.
  */
+private val interpreter = Interpreter()
+
 fun main(args: Array<String>) {
     when {
         args.size > 1 -> {
@@ -75,8 +77,7 @@ private fun run(source: String) {
     val scanner = Scanner(source)
     val tokens = scanner.scanTokens()
     val parser = Parser(tokens)
-    val expression = parser.parse()
+    val statements = parser.parse()
     if (GwanLang.hadError) return
-    val expr = expression ?: return
-    Interpreter().interpret(expr)
+    interpreter.interpret(statements)
 }

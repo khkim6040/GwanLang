@@ -75,6 +75,9 @@ class Interpreter {
                 else -> throw IllegalStateException("Unknown binary operator: ${expr.op.type}")
             }
         }
+        is Expr.Variable -> throw RuntimeError(expr.name, "Variables not yet implemented.")
+        is Expr.Assign -> throw RuntimeError(expr.name, "Assignment not yet implemented.")
+        is Expr.Logical -> throw RuntimeError(expr.op, "Logical operators not yet implemented.")
     }
 
     private fun isTruthy(value: Any?): Boolean {

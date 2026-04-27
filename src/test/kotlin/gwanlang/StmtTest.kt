@@ -79,4 +79,45 @@ class StmtTest {
         assertEquals(condition, whileStmt.condition)
         assertEquals(body, whileStmt.body)
     }
+
+    @Test
+    fun `Function 문은 name, params, body를 보관한다`() {
+        val name = Token(TokenType.IDENTIFIER, "greet", null, 1)
+        val params = listOf(
+            Token(TokenType.IDENTIFIER, "a", null, 1),
+            Token(TokenType.IDENTIFIER, "b", null, 1)
+        )
+        val body = listOf(Stmt.Print(Expr.Literal("hello")))
+        val fn = Stmt.Function(name, params, body)
+
+        assertEquals(name, fn.name)
+        assertEquals(params, fn.params)
+        assertEquals(body, fn.body)
+    }
+
+    @Test
+    fun `Function 문의 params는 비어 있을 수 있다`() {
+        val name = Token(TokenType.IDENTIFIER, "noop", null, 1)
+        val fn = Stmt.Function(name, emptyList(), emptyList())
+
+        assertEquals(0, fn.params.size)
+    }
+
+    @Test
+    fun `Return 문은 keyword와 value를 보관한다`() {
+        val keyword = Token(TokenType.RETURN, "return", null, 1)
+        val value = Expr.Literal(42.0)
+        val ret = Stmt.Return(keyword, value)
+
+        assertEquals(keyword, ret.keyword)
+        assertEquals(value, ret.value)
+    }
+
+    @Test
+    fun `Return 문의 value는 null일 수 있다`() {
+        val keyword = Token(TokenType.RETURN, "return", null, 1)
+        val ret = Stmt.Return(keyword, null)
+
+        assertNull(ret.value)
+    }
 }

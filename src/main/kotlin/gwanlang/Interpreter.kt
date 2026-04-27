@@ -51,6 +51,14 @@ class Interpreter {
                     execute(stmt.body)
                 }
             }
+            is Stmt.Function -> {
+                val function = GwanFunction(stmt, environment)
+                environment.define(stmt.name.lexeme, function)
+            }
+            is Stmt.Return -> {
+                val value = if (stmt.value != null) evaluate(stmt.value) else null
+                throw Return(value)
+            }
         }
     }
 
@@ -133,6 +141,7 @@ class Interpreter {
             environment.assign(expr.name, value)
             value
         }
+        is Expr.Call -> TODO("Phase 5: 함수 호출 평가")
         is Expr.Logical -> {
             val left = evaluate(expr.left)
             if (expr.op.type == TokenType.OR) {

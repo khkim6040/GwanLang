@@ -9,6 +9,7 @@ class AstPrinter {
         is Expr.Variable -> expr.name.lexeme
         is Expr.Assign -> parenthesize("= ${expr.name.lexeme}", expr.value)
         is Expr.Logical -> parenthesize(expr.op.lexeme, expr.left, expr.right)
+        is Expr.Call -> parenthesize("call ${print(expr.callee)}", *expr.arguments.toTypedArray())
     }
 
     private fun parenthesize(name: String, vararg exprs: Expr): String {

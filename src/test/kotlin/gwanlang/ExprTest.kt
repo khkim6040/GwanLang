@@ -73,4 +73,26 @@ class ExprTest {
         assertEquals(op, logical.op)
         assertEquals(right, logical.right)
     }
+
+    @Test
+    fun `Call 노드는 callee, paren, arguments를 보관한다`() {
+        val callee = Expr.Variable(Token(TokenType.IDENTIFIER, "f", null, 1))
+        val paren = Token(TokenType.RIGHT_PAREN, ")", null, 1)
+        val args = listOf(Expr.Literal(1.0), Expr.Literal(2.0))
+        val call = Expr.Call(callee, paren, args)
+
+        assertEquals(callee, call.callee)
+        assertEquals(paren, call.paren)
+        assertEquals(2, call.arguments.size)
+        assertEquals(args, call.arguments)
+    }
+
+    @Test
+    fun `Call 노드는 인자가 없을 수 있다`() {
+        val callee = Expr.Variable(Token(TokenType.IDENTIFIER, "f", null, 1))
+        val paren = Token(TokenType.RIGHT_PAREN, ")", null, 1)
+        val call = Expr.Call(callee, paren, emptyList())
+
+        assertEquals(0, call.arguments.size)
+    }
 }

@@ -43,4 +43,34 @@ class ExprTest {
         assertEquals(op, unary.op)
         assertEquals(right, unary.right)
     }
+
+    @Test
+    fun `Variable 노드는 name 토큰을 보관한다`() {
+        val name = Token(TokenType.IDENTIFIER, "x", null, 1)
+        val variable = Expr.Variable(name)
+
+        assertEquals(name, variable.name)
+    }
+
+    @Test
+    fun `Assign 노드는 name과 value를 보관한다`() {
+        val name = Token(TokenType.IDENTIFIER, "x", null, 1)
+        val value = Expr.Literal(42.0)
+        val assign = Expr.Assign(name, value)
+
+        assertEquals(name, assign.name)
+        assertEquals(value, assign.value)
+    }
+
+    @Test
+    fun `Logical 노드는 left, op, right를 보관한다`() {
+        val left = Expr.Literal(true)
+        val op = Token(TokenType.OR, "or", null, 1)
+        val right = Expr.Literal(false)
+        val logical = Expr.Logical(left, op, right)
+
+        assertEquals(left, logical.left)
+        assertEquals(op, logical.op)
+        assertEquals(right, logical.right)
+    }
 }

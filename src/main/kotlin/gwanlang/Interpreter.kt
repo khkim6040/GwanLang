@@ -1,18 +1,70 @@
 package gwanlang
 
 class Interpreter {
+    private val globals = Environment()
+    private var environment = globals
 
-    fun interpret(expression: Expr) {
+    fun interpret(statements: List<Stmt>) {
         try {
-            val value = evaluate(expression)
-            println(stringify(value))
+            for (statement in statements) {
+                execute(statement)
+            }
         } catch (error: RuntimeError) {
             GwanLang.runtimeError(error)
         }
     }
 
+    /** REPL용 — 표현식을 평가하여 값을 반환한다 */
+    fun interpretExpr(expr: Expr): Any? {
+        return try {
+            evaluate(expr)
+        } catch (error: RuntimeError) {
+            GwanLang.runtimeError(error)
+            null
+        }
+    }
+
     /** 테스트용 — evaluate를 외부에서 직접 호출 */
     internal fun testEvaluate(expr: Expr): Any? = evaluate(expr)
+
+    private fun execute(stmt: Stmt) {
+        when (stmt) {
+            is Stmt.Expression -> evaluate(stmt.expression)
+            is Stmt.Print -> {
+                val value = evaluate(stmt.expression)
+                println(stringify(value))
+            }
+            is Stmt.Var -> {
+                val value = if (stmt.initializer != null) evaluate(stmt.initializer) else null
+                environment.define(stmt.name.lexeme, value)
+            }
+            is Stmt.Block -> executeBlock(stmt.statements, Environment(environment))
+            is Stmt.If -> {
+                if (isTruthy(evaluate(stmt.condition))) {
+                    execute(stmt.thenBranch)
+                } else if (stmt.elseBranch != null) {
+                    execute(stmt.elseBranch)
+                }
+            }
+            is Stmt.While -> {
+                while (isTruthy(evaluate(stmt.condition))) {
+                    execute(stmt.body)
+                }
+            }
+        }
+    }
+
+    fun executeBlock(statements: List<Stmt>, environment: Environment) {
+        val previous = this.environment
+        try {
+            this.environment = environment
+            for (statement in statements) {
+                execute(statement)
+            }
+        } finally {
+            this.environment = previous
+        }
+    }
 
     private fun evaluate(expr: Expr): Any? = when (expr) {
         is Expr.Literal -> expr.value
@@ -75,6 +127,20 @@ class Interpreter {
                 else -> throw IllegalStateException("Unknown binary operator: ${expr.op.type}")
             }
         }
+        is Expr.Variable -> environment.get(expr.name)
+        is Expr.Assign -> {
+            val value = evaluate(expr.value)
+            environment.assign(expr.name, value)
+            value
+        }
+        is Expr.Logical -> {
+            val left = evaluate(expr.left)
+            if (expr.op.type == TokenType.OR) {
+                if (isTruthy(left)) left else evaluate(expr.right)
+            } else {
+                if (!isTruthy(left)) left else evaluate(expr.right)
+            }
+        }
     }
 
     private fun isTruthy(value: Any?): Boolean {
@@ -99,7 +165,7 @@ class Interpreter {
         throw RuntimeError(op, "Operand must be a number.")
     }
 
-    private fun stringify(value: Any?): String {
+    fun stringify(value: Any?): String {
         if (value == null) return "nil"
         if (value is Double) {
             val text = value.toString()

@@ -6,8 +6,9 @@ import kotlin.test.assertEquals
 class AstPrinterTest {
 
     private fun printAst(source: String): String {
-        val tokens = Scanner(source).scanTokens()
-        val expr = Parser(tokens).parse()!!
+        val tokens = Scanner("$source;").scanTokens()
+        val stmts = Parser(tokens).parse()
+        val expr = (stmts[0] as Stmt.Expression).expression
         return AstPrinter().print(expr)
     }
 

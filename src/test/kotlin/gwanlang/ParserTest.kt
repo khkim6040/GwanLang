@@ -7,9 +7,13 @@ import kotlin.test.assertNull
 
 class ParserTest {
 
+    /** 표현식 하나를 파싱하여 반환한다. 세미콜론 없는 단일 표현식을 표현식 문으로 감싸서 처리. */
     private fun parse(source: String): Expr? {
-        val tokens = Scanner(source).scanTokens()
-        return Parser(tokens).parse()
+        val tokens = Scanner("$source;").scanTokens()
+        val stmts = Parser(tokens).parse()
+        if (stmts.isEmpty()) return null
+        val first = stmts[0]
+        return if (first is Stmt.Expression) first.expression else null
     }
 
     // --- 사이클 2: 리터럴 ---

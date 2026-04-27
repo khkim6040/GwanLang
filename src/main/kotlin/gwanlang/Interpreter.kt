@@ -21,6 +21,9 @@ class Interpreter {
             }
         } catch (error: RuntimeError) {
             GwanLang.runtimeError(error)
+        } catch (_: Return) {
+            System.err.println("RuntimeError: Can't return from top-level code.")
+            GwanLang.hadRuntimeError = true
         }
     }
 

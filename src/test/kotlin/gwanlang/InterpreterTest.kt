@@ -503,6 +503,24 @@ class InterpreterTest {
 
     // --- Phase 5: 함수 ---
 
+    // --- 최상위 return 방어 ---
+
+    @Test
+    fun `최상위에서 return을 사용하면 런타임 에러`() {
+        val errOutput = java.io.ByteArrayOutputStream()
+        val originalErr = System.err
+        System.setErr(java.io.PrintStream(errOutput))
+        val originalHadRuntimeError = GwanLang.hadRuntimeError
+        try {
+            runAndCapture("return 42;")
+            assertTrue(errOutput.toString().contains("Can't return from top-level code"))
+            assertTrue(GwanLang.hadRuntimeError)
+        } finally {
+            System.setErr(originalErr)
+            GwanLang.hadRuntimeError = originalHadRuntimeError
+        }
+    }
+
     // --- 사이클 10: 네이티브 함수 clock ---
 
     @Test

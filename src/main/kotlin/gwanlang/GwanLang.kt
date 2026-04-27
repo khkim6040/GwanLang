@@ -82,7 +82,7 @@ private fun run(source: String, repl: Boolean = false) {
 
     if (repl && statements.size == 1 && statements[0] is Stmt.Expression) {
         val value = interpreter.interpretExpr((statements[0] as Stmt.Expression).expression)
-        if (value != null) println(interpreter.stringify(value))
+        if (!GwanLang.hadRuntimeError) println(interpreter.stringify(value))
         return
     }
 

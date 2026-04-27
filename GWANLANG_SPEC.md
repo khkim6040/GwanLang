@@ -323,8 +323,8 @@ class Environment(val enclosing: Environment? = null) {
 |-------|------|--------|--------|------|
 | 1. Scanner | ✅ 완료 | 2026-04-11 | 2026-04-11 | TDD 사이클 12개, 테스트 26건 |
 | 2. Parser | ✅ 완료 | 2026-04-19 | 2026-04-19 | 표현식 전용, TDD 사이클 12개 |
-| 3. Evaluator | ⬜ 미시작 | | | |
-| 4. Statements | ⬜ 미시작 | | | |
-| 5. Functions | ⬜ 미시작 | | | |
+| 3. Evaluator | ✅ 완료 | 2026-04-20 | 2026-04-20 | TDD 사이클 14개 |
+| 4. Statements | ✅ 완료 | 2026-04-21 | 2026-04-21 | TDD 사이클 27개 |
+| 5. Functions | ✅ 완료 | 2026-04-27 | 2026-04-27 | TDD 사이클 22개 |
 | 6. Resolver | ⬜ 미시작 | | | |
 | 7. Classes | ⬜ 미시작 | | | |

@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+### Phase 5: Functions & Closures — 함수와 클로저
+- `Expr.Call` — 함수 호출 표현식 AST 노드
+- `Stmt.Function` — 함수 선언문, `Stmt.Return` — return 문
+- `GwanCallable` 인터페이스 — 호출 가능 객체 추상화 (arity, call)
+- `GwanFunction` 클래스 — 사용자 정의 함수 런타임 객체
+  - 클로저: 선언 시점의 Environment 캡처
+  - 매개변수 바인딩, 본문 실행, Return 예외 처리
+- `Return` 예외 클래스 — return 제어 흐름 (스택 트레이스 생략)
+- `Parser` 확장
+  - `fun` 선언 파싱 (매개변수 포함, 255개 제한)
+  - call 표현식 파싱 (인자 255개 제한, 연쇄 호출)
+  - `return` 문 파싱 (값 있음/없음)
+- `Interpreter` 확장
+  - 함수 선언 실행 (환경 캡처), 함수 호출 (GwanCallable 디스패치)
+  - 인자 개수 불일치 / 호출 불가 값 RuntimeError
+  - 네이티브 함수 `clock()` 등록
+- `examples/functions-demo.gwan` — 함수, 클로저, 재귀, 고차 함수 시연
+- 테스트: `GwanFunctionTest`, `FunctionParserTest`, `InterpreterTest` 확장 — TDD 사이클 22개 기반
+
 ### Phase 4: Statements & State — 문장과 상태
 - `Stmt` sealed class — 6종 (Expression, Print, Var, Block, If, While)
 - `Expr` 확장 — Variable, Assign, Logical 서브타입 추가

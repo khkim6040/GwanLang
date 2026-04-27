@@ -4,6 +4,16 @@ class Interpreter {
     private val globals = Environment()
     private var environment = globals
 
+    init {
+        globals.define("clock", object : GwanCallable {
+            override fun arity(): Int = 0
+            override fun call(interpreter: Interpreter, arguments: List<Any?>): Any? {
+                return System.currentTimeMillis().toDouble() / 1000.0
+            }
+            override fun toString(): String = "<native fn>"
+        })
+    }
+
     fun interpret(statements: List<Stmt>) {
         try {
             for (statement in statements) {
@@ -141,7 +151,21 @@ class Interpreter {
             environment.assign(expr.name, value)
             value
         }
-        is Expr.Call -> TODO("Phase 5: 함수 호출 평가")
+        is Expr.Call -> {
+            val callee = evaluate(expr.callee)
+            val arguments = expr.arguments.map { evaluate(it) }
+
+            if (callee !is GwanCallable) {
+                throw RuntimeError(expr.paren, "Can only call functions and classes.")
+            }
+
+            if (arguments.size != callee.arity()) {
+                throw RuntimeError(expr.paren,
+                    "Expected ${callee.arity()} arguments but got ${arguments.size}.")
+            }
+
+            callee.call(this, arguments)
+        }
         is Expr.Logical -> {
             val left = evaluate(expr.left)
             if (expr.op.type == TokenType.OR) {

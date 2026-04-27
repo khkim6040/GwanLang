@@ -501,6 +501,190 @@ class InterpreterTest {
         assertEquals("medium", result)
     }
 
+    // --- Phase 5: 함수 ---
+
+    // --- 사이클 10: 네이티브 함수 clock ---
+
+    @Test
+    fun `clock 함수는 Double을 반환한다`() {
+        val tokens = Scanner("clock();").scanTokens()
+        val stmts = Parser(tokens).parse()
+        val expr = (stmts[0] as Stmt.Expression).expression
+        val result = Interpreter().testEvaluate(expr)
+        assertTrue(result is Double)
+    }
+
+    // --- 사이클 11: 단순 함수 호출 ---
+
+    @Test
+    fun `매개변수 없는 함수를 선언하고 호출한다`() {
+        assertEquals("hi", runAndCapture("""
+            fun greet() { print "hi"; }
+            greet();
+        """.trimIndent()))
+    }
+
+    // --- 사이클 12: 매개변수 바인딩 ---
+
+    @Test
+    fun `매개변수가 있는 함수를 호출한다`() {
+        assertEquals("3", runAndCapture("""
+            fun add(a, b) { print a + b; }
+            add(1, 2);
+        """.trimIndent()))
+    }
+
+    // --- 사이클 13: return 값 반환 ---
+
+    @Test
+    fun `함수가 return으로 값을 반환한다`() {
+        assertEquals("9", runAndCapture("""
+            fun square(x) { return x * x; }
+            print square(3);
+        """.trimIndent()))
+    }
+
+    // --- 사이클 14: 암묵적 nil 반환 ---
+
+    @Test
+    fun `return 없는 함수는 nil을 반환한다`() {
+        assertEquals("nil", runAndCapture("""
+            fun f() {}
+            print f();
+        """.trimIndent()))
+    }
+
+    @Test
+    fun `값 없는 return은 nil을 반환한다`() {
+        assertEquals("nil", runAndCapture("""
+            fun f() { return; }
+            print f();
+        """.trimIndent()))
+    }
+
+    // --- 사이클 15: 인자 개수 검증 ---
+
+    @Test
+    fun `인자 개수가 다르면 런타임 에러`() {
+        val errOutput = java.io.ByteArrayOutputStream()
+        val originalErr = System.err
+        System.setErr(java.io.PrintStream(errOutput))
+        val originalHadRuntimeError = GwanLang.hadRuntimeError
+        try {
+            runAndCapture("fun f(a) {} f(1, 2);")
+            assertTrue(errOutput.toString().contains("Expected 1 arguments but got 2"))
+        } finally {
+            System.setErr(originalErr)
+            GwanLang.hadRuntimeError = originalHadRuntimeError
+        }
+    }
+
+    // --- 사이클 16: 호출 불가 값 검증 ---
+
+    @Test
+    fun `함수가 아닌 값을 호출하면 런타임 에러`() {
+        val errOutput = java.io.ByteArrayOutputStream()
+        val originalErr = System.err
+        System.setErr(java.io.PrintStream(errOutput))
+        val originalHadRuntimeError = GwanLang.hadRuntimeError
+        try {
+            runAndCapture("var x = \"str\"; x();")
+            assertTrue(errOutput.toString().contains("Can only call functions and classes"))
+        } finally {
+            System.setErr(originalErr)
+            GwanLang.hadRuntimeError = originalHadRuntimeError
+        }
+    }
+
+    // --- 사이클 17: 재귀 함수 ---
+
+    @Test
+    fun `재귀 피보나치 함수가 정상 동작한다`() {
+        assertEquals("55", runAndCapture("""
+            fun fib(n) {
+                if (n <= 1) return n;
+                return fib(n - 1) + fib(n - 2);
+            }
+            print fib(10);
+        """.trimIndent()))
+    }
+
+    // --- 사이클 18: 클로저 ---
+
+    @Test
+    fun `클로저가 선언 시점의 환경을 캡처한다`() {
+        assertEquals("1\n2\n3", runAndCapture("""
+            fun makeCounter() {
+                var count = 0;
+                fun increment() {
+                    count = count + 1;
+                    return count;
+                }
+                return increment;
+            }
+            var counter = makeCounter();
+            print counter();
+            print counter();
+            print counter();
+        """.trimIndent()))
+    }
+
+    // --- 사이클 19: 중첩 함수 ---
+
+    @Test
+    fun `함수 안에서 함수를 선언하고 호출한다`() {
+        assertEquals("inner", runAndCapture("""
+            fun outer() {
+                fun inner() { return "inner"; }
+                return inner();
+            }
+            print outer();
+        """.trimIndent()))
+    }
+
+    // --- 사이클 20: 일급 함수 ---
+
+    @Test
+    fun `함수를 변수에 저장하고 호출한다`() {
+        assertEquals("hello", runAndCapture("""
+            fun greet() { return "hello"; }
+            var f = greet;
+            print f();
+        """.trimIndent()))
+    }
+
+    @Test
+    fun `함수를 인자로 전달한다`() {
+        assertEquals("6", runAndCapture("""
+            fun apply(f, x) { return f(x); }
+            fun double(n) { return n * 2; }
+            print apply(double, 3);
+        """.trimIndent()))
+    }
+
+    // --- 사이클 21: 연쇄 호출 ---
+
+    @Test
+    fun `연쇄 호출이 정상 동작한다`() {
+        assertEquals("result", runAndCapture("""
+            fun getFunc() {
+                fun inner() { return "result"; }
+                return inner;
+            }
+            print getFunc()();
+        """.trimIndent()))
+    }
+
+    // --- 사이클 22: 함수 통합 테스트 ---
+
+    @Test
+    fun `함수 toString은 fn 이름 형태이다`() {
+        assertEquals("<fn f>", runAndCapture("""
+            fun f() {}
+            print f;
+        """.trimIndent()))
+    }
+
     // --- Phase 3 통합 (기존) ---
 
     @Test

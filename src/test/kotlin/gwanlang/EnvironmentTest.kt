@@ -114,4 +114,54 @@ class EnvironmentTest {
         assertEquals(99.0, parent.get(token("x")))
         assertEquals(99.0, child.get(token("x")))
     }
+
+    // --- 거리 기반 조회/대입 ---
+
+    @Test
+    fun `getAt 거리 0은 현재 환경에서 조회한다`() {
+        val env = Environment()
+        env.define("x", 42.0)
+
+        assertEquals(42.0, env.getAt(0, "x"))
+    }
+
+    @Test
+    fun `getAt 거리 1은 부모 환경에서 조회한다`() {
+        val parent = Environment()
+        parent.define("x", 10.0)
+        val child = Environment(parent)
+        child.define("y", 20.0)
+
+        assertEquals(10.0, child.getAt(1, "x"))
+    }
+
+    @Test
+    fun `getAt 거리 2는 조부모 환경에서 조회한다`() {
+        val grandparent = Environment()
+        grandparent.define("x", 1.0)
+        val parent = Environment(grandparent)
+        val child = Environment(parent)
+
+        assertEquals(1.0, child.getAt(2, "x"))
+    }
+
+    @Test
+    fun `assignAt 거리 0은 현재 환경에 대입한다`() {
+        val env = Environment()
+        env.define("x", 1.0)
+        env.assignAt(0, token("x"), 99.0)
+
+        assertEquals(99.0, env.get(token("x")))
+    }
+
+    @Test
+    fun `assignAt 거리 1은 부모 환경에 대입한다`() {
+        val parent = Environment()
+        parent.define("x", 1.0)
+        val child = Environment(parent)
+
+        child.assignAt(1, token("x"), 99.0)
+
+        assertEquals(99.0, parent.get(token("x")))
+    }
 }

@@ -143,11 +143,11 @@ primary        → NUMBER | STRING | "true" | "false" | "nil" | "this"
 - `String` → Kotlin `String`
 
 **완료 기준:**
-- [ ] 산술/비교/논리 연산 평가
-- [ ] 런타임 타입 에러 처리
-- [ ] Truthiness 규칙: `nil`, `false` → falsy, 나머지 → truthy
-- [ ] 문자열 연결 (`+`)
-- [ ] 테스트: REPL에서 표현식 평가
+- [x] 산술/비교/논리 연산 평가
+- [x] 런타임 타입 에러 처리
+- [x] Truthiness 규칙: `nil`, `false` → falsy, 나머지 → truthy
+- [x] 문자열 연결 (`+`)
+- [x] 테스트: REPL에서 표현식 평가
 
 ---
 
@@ -155,13 +155,13 @@ primary        → NUMBER | STRING | "true" | "false" | "nil" | "this"
 **목표:** 변수 선언, 대입, 스코프, 제어 흐름 구현
 
 **완료 기준:**
-- [ ] Environment (스코프 체인) 구현
-- [ ] 변수 선언 / 대입
-- [ ] print 문
-- [ ] 블록 스코프 `{ ... }`
-- [ ] if / else
-- [ ] while / for 루프
-- [ ] 테스트: 피보나치 출력 등
+- [x] Environment (스코프 체인) 구현
+- [x] 변수 선언 / 대입
+- [x] print 문
+- [x] 블록 스코프 `{ ... }`
+- [x] if / else
+- [x] while / for 루프
+- [x] 테스트: 피보나치 출력 등
 
 ---
 
@@ -323,8 +323,8 @@ class Environment(val enclosing: Environment? = null) {
 |-------|------|--------|--------|------|
 | 1. Scanner | ✅ 완료 | 2026-04-11 | 2026-04-11 | TDD 사이클 12개, 테스트 26건 |
 | 2. Parser | ✅ 완료 | 2026-04-19 | 2026-04-19 | 표현식 전용, TDD 사이클 12개 |
-| 3. Evaluator | ⬜ 미시작 | | | |
-| 4. Statements | ⬜ 미시작 | | | |
-| 5. Functions | ⬜ 미시작 | | | |
+| 3. Evaluator | ✅ 완료 | 2026-04-20 | 2026-04-20 | TDD 사이클 14개 |
+| 4. Statements | ✅ 완료 | 2026-04-21 | 2026-04-21 | TDD 사이클 27개 |
+| 5. Functions | ✅ 완료 | 2026-04-27 | 2026-04-27 | TDD 사이클 22개 |
 | 6. Resolver | ⬜ 미시작 | | | |
 | 7. Classes | ⬜ 미시작 | | | |

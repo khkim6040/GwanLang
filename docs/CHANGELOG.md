@@ -2,6 +2,60 @@
 
 ## [Unreleased]
 
+### Phase 5: Functions & Closures — 함수와 클로저
+- `Expr.Call` — 함수 호출 표현식 AST 노드
+- `Stmt.Function` — 함수 선언문, `Stmt.Return` — return 문
+- `GwanCallable` 인터페이스 — 호출 가능 객체 추상화 (arity, call)
+- `GwanFunction` 클래스 — 사용자 정의 함수 런타임 객체
+  - 클로저: 선언 시점의 Environment 캡처
+  - 매개변수 바인딩, 본문 실행, Return 예외 처리
+- `Return` 예외 클래스 — return 제어 흐름 (스택 트레이스 생략)
+- `Parser` 확장
+  - `fun` 선언 파싱 (매개변수 포함, 255개 제한)
+  - call 표현식 파싱 (인자 255개 제한, 연쇄 호출)
+  - `return` 문 파싱 (값 있음/없음)
+- `Interpreter` 확장
+  - 함수 선언 실행 (환경 캡처), 함수 호출 (GwanCallable 디스패치)
+  - 인자 개수 불일치 / 호출 불가 값 RuntimeError
+  - 네이티브 함수 `clock()` 등록
+- `examples/functions-demo.gwan` — 함수, 클로저, 재귀, 고차 함수 시연
+- 테스트: `GwanFunctionTest`, `FunctionParserTest`, `InterpreterTest` 확장 — TDD 사이클 22개 기반
+
+### Phase 4: Statements & State — 문장과 상태
+- `Stmt` sealed class — 6종 (Expression, Print, Var, Block, If, While)
+- `Expr` 확장 — Variable, Assign, Logical 서브타입 추가
+- `Environment` 클래스 — 렉시컬 스코프 체인 (변수 맵의 연결 리스트)
+  - define/get/assign, 스코프 섀도잉, 미정의 변수 RuntimeError
+- `Parser` 확장 — 문장/선언 파싱
+  - print, expression, var 선언, 블록, if/else, while, for 파싱
+  - for → while 디슈가링 (별도 AST 노드 없음)
+  - assignment, 논리 연산자 (and, or)
+  - 에러 복구 (synchronize)
+- `Interpreter` 확장 — 문장 실행
+  - execute(Stmt), executeBlock, Environment 기반 변수/스코프
+  - if/else, while 실행
+  - 논리 연산자 short-circuit 평가 (원래 값 반환)
+- `GwanLang.kt` 파이프라인 변경: `List<Stmt>` 실행, 전역 Interpreter 인스턴스
+- `examples/statements-demo.gwan` — 변수, 스코프, 제어흐름 시연 예제
+- 테스트: `StmtTest`, `EnvironmentTest`, `StatementParserTest`, `InterpreterTest` 확장 — TDD 사이클 27개 기반
+
+### Phase 3: Evaluator — 표현식 평가
+- `Interpreter` 클래스 — `when` 표현식 기반 Tree-walking 평가기
+  - 산술 연산: `+`, `-`, `*`, `/`
+  - 비교 연산: `>`, `>=`, `<`, `<=`
+  - 동등 연산: `==`, `!=`
+  - 단항 연산: `-` (부호 반전), `!` (논리 부정)
+  - 문자열 연결: `+` (양쪽 모두 String일 때)
+  - Truthiness: `nil`, `false`만 falsy
+- `RuntimeError` 예외 클래스 — 런타임 타입 에러 리포팅
+  - 0으로 나누기 RuntimeError
+  - 타입 불일치 RuntimeError (줄 번호 포함)
+- `GwanLang.kt` 파이프라인 변경: Scanner → Parser → Interpreter
+  - `runtimeError()` 메서드, `hadRuntimeError` 플래그, exit code 70
+  - REPL에서 `hadRuntimeError` 리셋
+- `examples/evaluator-demo.gwan` — 표현식 평가 시연 예제
+- 테스트: `InterpreterTest` — TDD 사이클 14개 기반
+
 ### Phase 2: Parser (표현식) — 구문 분석
 - `Expr` sealed class — 4종 (Binary, Grouping, Literal, Unary)
 - `Parser` 클래스 — Recursive Descent 방식 표현식 파싱

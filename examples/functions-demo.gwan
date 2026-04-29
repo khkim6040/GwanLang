@@ -1,0 +1,47 @@
+// Phase 5: Functions & Closures 시연
+
+// 1. 기본 함수
+fun greet(name) {
+  print "Hello, " + name + "!";
+}
+greet("GwanLang");
+
+// 2. return 값
+fun square(x) {
+  return x * x;
+}
+print square(5); // 25
+
+// 3. 재귀 — 피보나치
+fun fib(n) {
+  if (n <= 1) return n;
+  return fib(n - 1) + fib(n - 2);
+}
+print fib(10); // 55
+
+// 4. 클로저 — 카운터
+fun makeCounter() {
+  var count = 0;
+  fun increment() {
+    count = count + 1;
+    return count;
+  }
+  return increment;
+}
+
+var counter = makeCounter();
+print counter(); // 1
+print counter(); // 2
+print counter(); // 3
+
+// 5. 고차 함수
+fun apply(f, x) {
+  return f(x);
+}
+fun double(n) {
+  return n * 2;
+}
+print apply(double, 7); // 14
+
+// 6. 네이티브 함수
+print clock();

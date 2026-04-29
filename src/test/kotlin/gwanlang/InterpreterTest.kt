@@ -257,11 +257,14 @@ class InterpreterTest {
     private fun interpretAndCapture(source: String): String {
         val tokens = Scanner("print $source;").scanTokens()
         val stmts = Parser(tokens).parse()
+        val interp = Interpreter()
+        val resolver = Resolver(interp)
+        resolver.resolve(stmts)
         val output = java.io.ByteArrayOutputStream()
         val originalOut = System.out
         System.setOut(java.io.PrintStream(output))
         try {
-            Interpreter().interpret(stmts)
+            interp.interpret(stmts)
         } finally {
             System.setOut(originalOut)
         }
@@ -299,11 +302,14 @@ class InterpreterTest {
     private fun runAndCapture(source: String): String {
         val tokens = Scanner(source).scanTokens()
         val stmts = Parser(tokens).parse()
+        val interp = Interpreter()
+        val resolver = Resolver(interp)
+        resolver.resolve(stmts)
         val output = java.io.ByteArrayOutputStream()
         val originalOut = System.out
         System.setOut(java.io.PrintStream(output))
         try {
-            Interpreter().interpret(stmts)
+            interp.interpret(stmts)
         } finally {
             System.setOut(originalOut)
         }
@@ -701,6 +707,86 @@ class InterpreterTest {
             fun f() {}
             print f;
         """.trimIndent()))
+    }
+
+    // --- Phase 6: Resolver 통합 ---
+
+    /** Resolver를 거친 뒤 실행하고 stdout을 반환한다 */
+    private fun runWithResolver(source: String): String {
+        val tokens = Scanner(source).scanTokens()
+        val stmts = Parser(tokens).parse()
+        val interp = Interpreter()
+        val resolver = Resolver(interp)
+        resolver.resolve(stmts)
+        if (GwanLang.hadError) return ""
+        val output = java.io.ByteArrayOutputStream()
+        val originalOut = System.out
+        System.setOut(java.io.PrintStream(output))
+        try {
+            interp.interpret(stmts)
+        } finally {
+            System.setOut(originalOut)
+        }
+        return output.toString().trimEnd()
+    }
+
+    @Test
+    fun `Resolver 통합 - 클로저가 선언 시점의 변수를 정확히 참조한다`() {
+        val result = runWithResolver("""
+            var a = "global";
+            {
+                fun showA() {
+                    print a;
+                }
+                showA();
+                var a = "block";
+                showA();
+            }
+        """.trimIndent())
+        assertEquals("global\nglobal", result)
+    }
+
+    @Test
+    fun `Resolver 통합 - 블록 내 변수 대입이 올바른 환경에 반영된다`() {
+        val result = runWithResolver("""
+            var a = 1;
+            {
+                a = 2;
+            }
+            print a;
+        """.trimIndent())
+        assertEquals("2", result)
+    }
+
+    @Test
+    fun `Resolver 통합 - 중첩 클로저 카운터`() {
+        val result = runWithResolver("""
+            fun makeCounter() {
+                var count = 0;
+                fun increment() {
+                    count = count + 1;
+                    return count;
+                }
+                return increment;
+            }
+            var c = makeCounter();
+            print c();
+            print c();
+            print c();
+        """.trimIndent())
+        assertEquals("1\n2\n3", result)
+    }
+
+    @Test
+    fun `Resolver 통합 - 재귀 피보나치`() {
+        val result = runWithResolver("""
+            fun fib(n) {
+                if (n <= 1) return n;
+                return fib(n - 1) + fib(n - 2);
+            }
+            print fib(10);
+        """.trimIndent())
+        assertEquals("55", result)
     }
 
     // --- Phase 3 통합 (기존) ---

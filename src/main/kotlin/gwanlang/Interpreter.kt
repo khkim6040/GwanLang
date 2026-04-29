@@ -3,6 +3,11 @@ package gwanlang
 class Interpreter {
     private val globals = Environment()
     private var environment = globals
+    private val locals = java.util.IdentityHashMap<Expr, Int>()
+
+    fun resolve(expr: Expr, depth: Int) {
+        locals[expr] = depth
+    }
 
     init {
         globals.define("clock", object : GwanCallable {

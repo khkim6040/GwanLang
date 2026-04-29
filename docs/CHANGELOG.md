@@ -2,6 +2,29 @@
 
 ## [Unreleased]
 
+### Phase 6: Resolver — 정적 변수 바인딩 분석
+- `Resolver` 클래스 — AST 순회, 스코프 스택 기반 변수 바인딩 거리 계산
+  - 블록/함수/매개변수 스코프 분석
+  - `resolveLocal()` — 변수 참조에서 선언까지의 스코프 거리 계산
+  - `resolveFunction()` — 함수 본문 분석, `currentFunction` 추적
+- 정적 에러 검출
+  - 같은 스코프 중복 선언: "Already a variable with this name in this scope."
+  - 자기 참조 초기화: "Can't read local variable in its own initializer."
+  - 최상위 `return`: "Can't return from top-level code."
+- `FunctionType` enum — NONE, FUNCTION (return 문맥 검증용)
+- `Environment` 확장
+  - `getAt(distance, name)` — 거리 기반 변수 조회
+  - `assignAt(distance, name, value)` — 거리 기반 변수 대입
+  - `ancestor(distance)` — N단계 상위 환경 반환
+- `Interpreter` 변경
+  - `locals: IdentityHashMap<Expr, Int>` — Resolver가 계산한 거리 저장
+  - `resolve(expr, depth)` — Resolver에서 호출
+  - `lookUpVariable(name, expr)` — 거리 기반 변수 조회 분기
+  - `Expr.Variable`, `Expr.Assign` — 거리 기반 조회/대입으로 변경
+- `GwanLang.kt` 파이프라인 변경: Scanner → Parser → Resolver → Interpreter
+- `examples/resolver-demo.gwan` — 클로저 스코프 정확성, 카운터, 섀도잉 시연
+- 테스트: `ResolverTest`, `EnvironmentTest`, `InterpreterTest` 확장 — TDD 사이클 15개 기반
+
 ### Phase 5: Functions & Closures — 함수와 클로저
 - `Expr.Call` — 함수 호출 표현식 AST 노드
 - `Stmt.Function` — 함수 선언문, `Stmt.Return` — return 문

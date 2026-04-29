@@ -1,5 +1,6 @@
 package gwanlang
 
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -7,6 +8,12 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class InterpreterTest {
+
+    @BeforeEach
+    fun setUp() {
+        GwanLang.hadError = false
+        GwanLang.hadRuntimeError = false
+    }
 
     // --- 사이클 1: RuntimeError ---
 

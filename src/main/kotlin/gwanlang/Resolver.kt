@@ -51,6 +51,7 @@ class Resolver(private val interpreter: Interpreter) {
                 resolve(stmt.condition)
                 resolve(stmt.body)
             }
+            is Stmt.Class -> TODO("Phase 7")
         }
     }
 
@@ -83,6 +84,10 @@ class Resolver(private val interpreter: Interpreter) {
                 resolve(expr.right)
             }
             is Expr.Unary -> resolve(expr.right)
+            is Expr.Get -> TODO("Phase 7")
+            is Expr.Set -> TODO("Phase 7")
+            is Expr.This -> TODO("Phase 7")
+            is Expr.Super -> TODO("Phase 7")
         }
     }
 

@@ -86,6 +86,7 @@ class Interpreter {
                 val value = if (stmt.value != null) evaluate(stmt.value) else null
                 throw Return(value)
             }
+            is Stmt.Class -> TODO("Phase 7")
         }
     }
 
@@ -196,6 +197,10 @@ class Interpreter {
                 if (!isTruthy(left)) left else evaluate(expr.right)
             }
         }
+        is Expr.Get -> TODO("Phase 7")
+        is Expr.Set -> TODO("Phase 7")
+        is Expr.This -> TODO("Phase 7")
+        is Expr.Super -> TODO("Phase 7")
     }
 
     private fun isTruthy(value: Any?): Boolean {

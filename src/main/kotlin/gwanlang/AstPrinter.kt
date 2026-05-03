@@ -10,6 +10,10 @@ class AstPrinter {
         is Expr.Assign -> parenthesize("= ${expr.name.lexeme}", expr.value)
         is Expr.Logical -> parenthesize(expr.op.lexeme, expr.left, expr.right)
         is Expr.Call -> parenthesize("call ${print(expr.callee)}", *expr.arguments.toTypedArray())
+        is Expr.Get -> "(. ${print(expr.obj)} ${expr.name.lexeme})"
+        is Expr.Set -> "(= ${print(expr.obj)}.${expr.name.lexeme} ${print(expr.value)})"
+        is Expr.This -> "this"
+        is Expr.Super -> "super.${expr.method.lexeme}"
     }
 
     private fun parenthesize(name: String, vararg exprs: Expr): String {

@@ -4,6 +4,7 @@ class Resolver(private val interpreter: Interpreter) {
 
     private val scopes = ArrayDeque<MutableMap<String, Boolean>>()
     private var currentFunction = FunctionType.NONE
+    private var currentClass = ClassType.NONE
 
     fun resolve(statements: List<Stmt>) {
         for (statement in statements) {
@@ -44,6 +45,9 @@ class Resolver(private val interpreter: Interpreter) {
                     GwanLang.error(stmt.keyword, "Can't return from top-level code.")
                 }
                 if (stmt.value != null) {
+                    if (currentFunction == FunctionType.INITIALIZER) {
+                        GwanLang.error(stmt.keyword, "Can't return a value from an initializer.")
+                    }
                     resolve(stmt.value)
                 }
             }
@@ -52,10 +56,17 @@ class Resolver(private val interpreter: Interpreter) {
                 resolve(stmt.body)
             }
             is Stmt.Class -> {
+                val enclosingClass = currentClass
+                currentClass = ClassType.CLASS
+
                 declare(stmt.name)
                 define(stmt.name)
 
                 if (stmt.superclass != null) {
+                    if (stmt.superclass.name.lexeme == stmt.name.lexeme) {
+                        GwanLang.error(stmt.superclass.name, "A class can't inherit from itself.")
+                    }
+                    currentClass = ClassType.SUBCLASS
                     resolve(stmt.superclass)
                     beginScope()
                     scopes.last()["super"] = true
@@ -65,7 +76,12 @@ class Resolver(private val interpreter: Interpreter) {
                 scopes.last()["this"] = true
 
                 for (method in stmt.methods) {
-                    resolveFunction(method, FunctionType.FUNCTION)
+                    val declaration = if (method.name.lexeme == "init") {
+                        FunctionType.INITIALIZER
+                    } else {
+                        FunctionType.METHOD
+                    }
+                    resolveFunction(method, declaration)
                 }
 
                 endScope()
@@ -73,6 +89,8 @@ class Resolver(private val interpreter: Interpreter) {
                 if (stmt.superclass != null) {
                     endScope()
                 }
+
+                currentClass = enclosingClass
             }
         }
     }
@@ -111,8 +129,21 @@ class Resolver(private val interpreter: Interpreter) {
                 resolve(expr.value)
                 resolve(expr.obj)
             }
-            is Expr.This -> resolveLocal(expr, expr.keyword)
-            is Expr.Super -> resolveLocal(expr, expr.keyword)
+            is Expr.This -> {
+                if (currentClass == ClassType.NONE) {
+                    GwanLang.error(expr.keyword, "Can't use 'this' outside of a class.")
+                    return
+                }
+                resolveLocal(expr, expr.keyword)
+            }
+            is Expr.Super -> {
+                if (currentClass == ClassType.NONE) {
+                    GwanLang.error(expr.keyword, "Can't use 'super' outside of a class.")
+                } else if (currentClass != ClassType.SUBCLASS) {
+                    GwanLang.error(expr.keyword, "Can't use 'super' in a class with no superclass.")
+                }
+                resolveLocal(expr, expr.keyword)
+            }
         }
     }
 
@@ -165,5 +196,13 @@ class Resolver(private val interpreter: Interpreter) {
 
 enum class FunctionType {
     NONE,
-    FUNCTION
+    FUNCTION,
+    INITIALIZER,
+    METHOD
+}
+
+enum class ClassType {
+    NONE,
+    CLASS,
+    SUBCLASS
 }

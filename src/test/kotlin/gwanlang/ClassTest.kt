@@ -282,4 +282,36 @@ class ClassTest {
         assertFalse(GwanLang.hadError)
         assertEquals("10", output)
     }
+
+    // --- TDD 사이클 15~16, 20~21: Resolver 정적 에러 검출 ---
+
+    @Test
+    fun `클래스 밖에서 this 사용 시 정적 에러`() {
+        interpret("print this;")
+        assertTrue(GwanLang.hadError)
+    }
+
+    @Test
+    fun `init에서 값을 반환하면 정적 에러`() {
+        interpret("class Foo { init() { return 1; } }")
+        assertTrue(GwanLang.hadError)
+    }
+
+    @Test
+    fun `클래스 밖에서 super 사용 시 정적 에러`() {
+        interpret("super.method;")
+        assertTrue(GwanLang.hadError)
+    }
+
+    @Test
+    fun `상속 없는 클래스에서 super 사용 시 정적 에러`() {
+        interpret("class A { m() { super.m(); } }")
+        assertTrue(GwanLang.hadError)
+    }
+
+    @Test
+    fun `자기 자신을 상속하면 정적 에러`() {
+        interpret("class A < A {}")
+        assertTrue(GwanLang.hadError)
+    }
 }

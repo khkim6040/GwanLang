@@ -139,8 +139,10 @@ class Resolver(private val interpreter: Interpreter) {
             is Expr.Super -> {
                 if (currentClass == ClassType.NONE) {
                     GwanLang.error(expr.keyword, "Can't use 'super' outside of a class.")
+                    return
                 } else if (currentClass != ClassType.SUBCLASS) {
                     GwanLang.error(expr.keyword, "Can't use 'super' in a class with no superclass.")
+                    return
                 }
                 resolveLocal(expr, expr.keyword)
             }

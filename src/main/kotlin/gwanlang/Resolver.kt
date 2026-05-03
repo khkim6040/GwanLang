@@ -51,7 +51,19 @@ class Resolver(private val interpreter: Interpreter) {
                 resolve(stmt.condition)
                 resolve(stmt.body)
             }
-            is Stmt.Class -> TODO("Phase 7")
+            is Stmt.Class -> {
+                declare(stmt.name)
+                define(stmt.name)
+
+                beginScope()
+                scopes.last()["this"] = true
+
+                for (method in stmt.methods) {
+                    resolveFunction(method, FunctionType.FUNCTION)
+                }
+
+                endScope()
+            }
         }
     }
 
@@ -84,10 +96,13 @@ class Resolver(private val interpreter: Interpreter) {
                 resolve(expr.right)
             }
             is Expr.Unary -> resolve(expr.right)
-            is Expr.Get -> TODO("Phase 7")
-            is Expr.Set -> TODO("Phase 7")
-            is Expr.This -> TODO("Phase 7")
-            is Expr.Super -> TODO("Phase 7")
+            is Expr.Get -> resolve(expr.obj)
+            is Expr.Set -> {
+                resolve(expr.value)
+                resolve(expr.obj)
+            }
+            is Expr.This -> resolveLocal(expr, expr.keyword)
+            is Expr.Super -> resolveLocal(expr, expr.keyword)
         }
     }
 

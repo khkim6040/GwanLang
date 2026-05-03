@@ -86,7 +86,18 @@ class Interpreter {
                 val value = if (stmt.value != null) evaluate(stmt.value) else null
                 throw Return(value)
             }
-            is Stmt.Class -> TODO("Phase 7")
+            is Stmt.Class -> {
+                environment.define(stmt.name.lexeme, null)
+
+                val methods = mutableMapOf<String, GwanFunction>()
+                for (method in stmt.methods) {
+                    val function = GwanFunction(method, environment, method.name.lexeme == "init")
+                    methods[method.name.lexeme] = function
+                }
+
+                val klass = GwanClass(stmt.name.lexeme, null, methods)
+                environment.assign(stmt.name, klass)
+            }
         }
     }
 
@@ -197,10 +208,25 @@ class Interpreter {
                 if (!isTruthy(left)) left else evaluate(expr.right)
             }
         }
-        is Expr.Get -> TODO("Phase 7")
-        is Expr.Set -> TODO("Phase 7")
-        is Expr.This -> TODO("Phase 7")
-        is Expr.Super -> TODO("Phase 7")
+        is Expr.Get -> {
+            val obj = evaluate(expr.obj)
+            if (obj is GwanInstance) {
+                obj.get(expr.name)
+            } else {
+                throw RuntimeError(expr.name, "Only instances have properties.")
+            }
+        }
+        is Expr.Set -> {
+            val obj = evaluate(expr.obj)
+            if (obj !is GwanInstance) {
+                throw RuntimeError(expr.name, "Only instances have fields.")
+            }
+            val value = evaluate(expr.value)
+            obj.set(expr.name, value)
+            value
+        }
+        is Expr.This -> lookUpVariable(expr.keyword, expr)
+        is Expr.Super -> TODO("Phase 7: inheritance")
     }
 
     private fun isTruthy(value: Any?): Boolean {

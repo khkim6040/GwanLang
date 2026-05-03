@@ -109,4 +109,109 @@ class ClassTest {
         assertEquals("super", expr.keyword.lexeme)
         assertEquals("method", expr.method.lexeme)
     }
+
+    // --- TDD 사이클 9~14: 클래스 인스턴스, 프로퍼티, 메서드, this, init ---
+
+    private fun interpret(source: String): String {
+        val out = java.io.ByteArrayOutputStream()
+        val prevOut = System.out
+        System.setOut(java.io.PrintStream(out))
+        try {
+            val scanner = Scanner(source)
+            val tokens = scanner.scanTokens()
+            val parser = Parser(tokens).parse()
+            val interpreter = Interpreter()
+            val resolver = Resolver(interpreter)
+            resolver.resolve(parser)
+            if (!GwanLang.hadError) {
+                interpreter.interpret(parser)
+            }
+        } finally {
+            System.setOut(prevOut)
+        }
+        return out.toString().trim()
+    }
+
+    @Test
+    fun `클래스 선언 및 인스턴스를 생성한다`() {
+        val output = interpret("class Foo {} var f = Foo(); print f;")
+        assertFalse(GwanLang.hadError)
+        assertEquals("Foo instance", output)
+    }
+
+    @Test
+    fun `클래스 자체를 출력하면 이름이 나온다`() {
+        val output = interpret("class Foo {} print Foo;")
+        assertFalse(GwanLang.hadError)
+        assertEquals("Foo", output)
+    }
+
+    @Test
+    fun `인스턴스에 필드를 저장하고 조회한다`() {
+        val output = interpret("class Foo {} var f = Foo(); f.x = 42; print f.x;")
+        assertFalse(GwanLang.hadError)
+        assertEquals("42", output)
+    }
+
+    @Test
+    fun `존재하지 않는 프로퍼티 접근 시 런타임 에러`() {
+        interpret("class Foo {} var f = Foo(); print f.x;")
+        assertTrue(GwanLang.hadRuntimeError)
+    }
+
+    @Test
+    fun `인스턴스가 아닌 것에 프로퍼티 접근 시 런타임 에러`() {
+        interpret("""var x = "str"; print x.field;""")
+        assertTrue(GwanLang.hadRuntimeError)
+    }
+
+    @Test
+    fun `메서드를 호출한다`() {
+        val output = interpret("""
+            class Foo {
+              bar() { return 1; }
+            }
+            print Foo().bar();
+        """.trimIndent())
+        assertFalse(GwanLang.hadError)
+        assertEquals("1", output)
+    }
+
+    @Test
+    fun `this로 인스턴스 필드에 접근한다`() {
+        val output = interpret("""
+            class Foo {
+              get() { return this.x; }
+            }
+            var f = Foo();
+            f.x = 42;
+            print f.get();
+        """.trimIndent())
+        assertFalse(GwanLang.hadError)
+        assertEquals("42", output)
+    }
+
+    @Test
+    fun `init 생성자로 인스턴스를 초기화한다`() {
+        val output = interpret("""
+            class Foo {
+              init(x) { this.x = x; }
+            }
+            print Foo(5).x;
+        """.trimIndent())
+        assertFalse(GwanLang.hadError)
+        assertEquals("5", output)
+    }
+
+    @Test
+    fun `init은 항상 인스턴스를 반환한다`() {
+        val output = interpret("""
+            class Foo {
+              init() { this.x = 1; return; }
+            }
+            print Foo().x;
+        """.trimIndent())
+        assertFalse(GwanLang.hadError)
+        assertEquals("1", output)
+    }
 }

@@ -1,0 +1,67 @@
+// Phase 7: 클래스와 상속 시연
+
+// 기본 클래스 선언 및 인스턴스 생성
+class Point {
+  init(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+  sum() {
+    return this.x + this.y;
+  }
+}
+
+var p = Point(3, 4);
+print p.sum(); // 7
+
+// 메서드와 this
+class Counter {
+  init() {
+    this.count = 0;
+  }
+  increment() {
+    this.count = this.count + 1;
+    return this.count;
+  }
+}
+
+var c = Counter();
+print c.increment(); // 1
+print c.increment(); // 2
+print c.increment(); // 3
+
+// 상속과 super
+class Animal {
+  init(name) {
+    this.name = name;
+  }
+  speak() {
+    return this.name + " makes a sound.";
+  }
+}
+
+class Dog < Animal {
+  speak() {
+    return this.name + " barks!";
+  }
+  fetch(item) {
+    return this.name + " fetches " + item + "!";
+  }
+}
+
+class GuideDog < Dog {
+  speak() {
+    return super.speak() + " (friendly)";
+  }
+}
+
+var dog = Dog("Rex");
+print dog.speak();       // Rex barks!
+print dog.fetch("ball"); // Rex fetches ball!
+
+var guide = GuideDog("Buddy");
+print guide.speak(); // Buddy barks! (friendly)
+
+// 메서드를 변수에 저장 (바운드 메서드)
+var method = guide.speak;
+print method(); // Buddy barks! (friendly)

@@ -86,6 +86,36 @@ class Interpreter {
                 val value = if (stmt.value != null) evaluate(stmt.value) else null
                 throw Return(value)
             }
+            is Stmt.Class -> {
+                val superclass: Any? = if (stmt.superclass != null) {
+                    val sc = evaluate(stmt.superclass)
+                    if (sc !is GwanClass) {
+                        throw RuntimeError(stmt.superclass.name, "Superclass must be a class.")
+                    }
+                    sc
+                } else null
+
+                environment.define(stmt.name.lexeme, null)
+
+                if (stmt.superclass != null) {
+                    environment = Environment(environment)
+                    environment.define("super", superclass)
+                }
+
+                val methods = mutableMapOf<String, GwanFunction>()
+                for (method in stmt.methods) {
+                    val function = GwanFunction(method, environment, method.name.lexeme == "init")
+                    methods[method.name.lexeme] = function
+                }
+
+                val klass = GwanClass(stmt.name.lexeme, superclass as GwanClass?, methods)
+
+                if (superclass != null) {
+                    environment = environment.enclosing!!
+                }
+
+                environment.assign(stmt.name, klass)
+            }
         }
     }
 
@@ -195,6 +225,32 @@ class Interpreter {
             } else {
                 if (!isTruthy(left)) left else evaluate(expr.right)
             }
+        }
+        is Expr.Get -> {
+            val obj = evaluate(expr.obj)
+            if (obj is GwanInstance) {
+                obj.get(expr.name)
+            } else {
+                throw RuntimeError(expr.name, "Only instances have properties.")
+            }
+        }
+        is Expr.Set -> {
+            val obj = evaluate(expr.obj)
+            if (obj !is GwanInstance) {
+                throw RuntimeError(expr.name, "Only instances have fields.")
+            }
+            val value = evaluate(expr.value)
+            obj.set(expr.name, value)
+            value
+        }
+        is Expr.This -> lookUpVariable(expr.keyword, expr)
+        is Expr.Super -> {
+            val distance = locals[expr]!!
+            val superclass = environment.getAt(distance, "super") as GwanClass
+            val obj = environment.getAt(distance - 1, "this") as GwanInstance
+            val method = superclass.findMethod(expr.method.lexeme)
+                ?: throw RuntimeError(expr.method, "Undefined property '${expr.method.lexeme}'.")
+            method.bind(obj)
         }
     }
 

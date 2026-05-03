@@ -2,6 +2,34 @@
 
 ## [Unreleased]
 
+### Phase 7: Classes — 클래스와 상속
+- AST 확장 — `Expr.Get`, `Expr.Set`, `Expr.This`, `Expr.Super`, `Stmt.Class`
+- `Parser` 확장
+  - `classDeclaration()` — 클래스 선언 파싱 (메서드, 상속 `<`)
+  - `.` 프로퍼티 접근 체인, 필드 대입 (`Expr.Get` → `Expr.Set` 변환)
+  - `this`, `super.method` 파싱
+- `GwanClass` — `GwanCallable` 구현, `findMethod()` (상속 체인 탐색), `arity()` (init 기반)
+- `GwanInstance` — 동적 필드 맵, `get()`/`set()`, 메서드 바인딩 디스패치
+- `GwanFunction` 확장
+  - `bind(instance)` — `this`를 클로저 환경에 주입한 새 함수 반환
+  - `isInitializer` — init 메서드의 암묵적/명시적 `this` 반환
+- `Interpreter` 확장
+  - `Stmt.Class` 실행 — superclass 평가, super 환경, 메서드 맵 생성
+  - `Expr.Get`/`Expr.Set` — 인스턴스 프로퍼티 조회/대입
+  - `Expr.This` — `lookUpVariable` 기반 거리 조회
+  - `Expr.Super` — super 환경에서 메서드 탐색 + this 바인딩
+- `Resolver` 확장
+  - `ClassType` enum (NONE, CLASS, SUBCLASS), `FunctionType` 확장 (INITIALIZER, METHOD)
+  - `Stmt.Class` 분석 — this/super 스코프 생성, 메서드 resolveFunction
+  - 정적 에러 검출:
+    - "Can't use 'this' outside of a class."
+    - "Can't use 'super' outside of a class."
+    - "Can't use 'super' in a class with no superclass."
+    - "A class can't inherit from itself."
+    - "Can't return a value from an initializer."
+- `examples/classes.gwan` — 클래스, 상속, super, 바운드 메서드 시연
+- 테스트: `ClassTest` — TDD 사이클 27개 기반
+
 ### Phase 6: Resolver — 정적 변수 바인딩 분석
 - `Resolver` 클래스 — AST 순회, 스코프 스택 기반 변수 바인딩 거리 계산
   - 블록/함수/매개변수 스코프 분석

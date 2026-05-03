@@ -92,18 +92,22 @@ dog.speak(); // Rex barks!
 ```
 src/main/kotlin/gwanlang/
 ├── GwanLang.kt          # 진입점 (REPL + 파일 실행)
-├── Token.kt             # Token, TokenType
+├── TokenType.kt         # 토큰 타입 enum
+├── Token.kt             # Token data class
 ├── Scanner.kt           # 렉서
 ├── Expr.kt              # Expression AST 노드 (sealed class)
 ├── Stmt.kt              # Statement AST 노드 (sealed class)
+├── AstPrinter.kt        # S-expression 형식 AST 출력
 ├── Parser.kt            # Recursive Descent 파서
+├── RuntimeError.kt      # 런타임 에러
 ├── Interpreter.kt       # Tree-walking 평가기
 ├── Environment.kt       # 렉시컬 스코프 체인
 ├── Resolver.kt          # 정적 변수 바인딩 분석
+├── GwanCallable.kt      # 호출 가능 객체 인터페이스
 ├── GwanFunction.kt      # 함수 런타임 객체
+├── Return.kt            # return 제어 흐름 예외
 ├── GwanClass.kt         # 클래스 런타임 객체
-├── GwanInstance.kt      # 인스턴스 런타임 객체
-└── RuntimeError.kt      # 런타임 에러
+└── GwanInstance.kt      # 인스턴스 런타임 객체
 ```
 
 ## 구현 진행 상황
@@ -118,7 +122,7 @@ src/main/kotlin/gwanlang/
 | 6 | Resolver — 정적 변수 바인딩 | Done |
 | 7 | Classes — 클래스, 상속, this, super | Done |
 
-각 Phase의 상세 스펙은 `docs/specs/` 하위 문서를 참고한다.
+각 Phase의 설계 스펙 및 작업 계획은 `docs/specs/` 하위 문서를 참고한다.
 
 ## 문법 (EBNF 요약)
 

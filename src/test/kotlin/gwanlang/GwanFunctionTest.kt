@@ -58,16 +58,22 @@ class GwanFunctionTest {
 
     @Test
     fun `call은 매개변수를 환경에 바인딩한다`() {
-        // fun f(a) { return a; }
-        val body = listOf(
-            Stmt.Return(
-                Token(TokenType.RETURN, "return", null, 1),
-                Expr.Variable(Token(TokenType.IDENTIFIER, "a", null, 1))
-            )
-        )
-        val fn = makeFunction("f", listOf("a"), body)
+        // fun f(a) { return a; } — Resolver를 거쳐야 변수 조회가 올바르게 동작
+        val source = "fun f(a) { return a; }"
+        val tokens = Scanner(source).scanTokens()
+        val stmts = Parser(tokens).parse()
         val interpreter = Interpreter()
-        val result = fn.call(interpreter, listOf(99.0))
+        val resolver = Resolver(interpreter)
+        resolver.resolve(stmts)
+        interpreter.interpret(stmts)
+
+        // f를 호출하여 매개변수 바인딩 검증
+        val callSource = "f(99);"
+        val callTokens = Scanner(callSource).scanTokens()
+        val callStmts = Parser(callTokens).parse()
+        val callExpr = (callStmts[0] as Stmt.Expression).expression
+        resolver.resolve(callStmts)
+        val result = interpreter.testEvaluate(callExpr)
         assertEquals(99.0, result)
     }
 

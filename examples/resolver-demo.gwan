@@ -1,0 +1,39 @@
+// Phase 6: Resolver — 정적 변수 바인딩 데모
+
+// 1. 클로저가 선언 시점의 변수를 정확히 참조
+var a = "global";
+{
+    fun showA() {
+        print a;
+    }
+    showA();        // "global"
+    var a = "block";
+    showA();        // "global" (block의 a가 아님!)
+}
+
+// 2. 중첩 클로저 카운터
+fun makeCounter() {
+    var count = 0;
+    fun increment() {
+        count = count + 1;
+        return count;
+    }
+    return increment;
+}
+
+var counter = makeCounter();
+print counter(); // 1
+print counter(); // 2
+print counter(); // 3
+
+// 3. 스코프 섀도잉과 클로저
+var x = "outer";
+fun printX() {
+    print x;
+}
+printX(); // "outer"
+
+{
+    var x = "inner";
+    printX(); // "outer" (클로저가 전역 x를 캡처)
+}

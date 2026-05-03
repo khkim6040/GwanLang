@@ -16,13 +16,33 @@ class Parser(private val tokens: List<Token>) {
 
     private fun declaration(): Stmt? {
         return try {
-            if (match(TokenType.FUN)) funDeclaration("function")
+            if (match(TokenType.CLASS)) classDeclaration()
+            else if (match(TokenType.FUN)) funDeclaration("function")
             else if (match(TokenType.VAR)) varDeclaration()
             else statement()
         } catch (e: ParseError) {
             synchronize()
             null
         }
+    }
+
+    private fun classDeclaration(): Stmt {
+        val name = consume(TokenType.IDENTIFIER, "Expect class name.")
+
+        val superclass = if (match(TokenType.LESS)) {
+            consume(TokenType.IDENTIFIER, "Expect superclass name.")
+            Expr.Variable(previous())
+        } else null
+
+        consume(TokenType.LEFT_BRACE, "Expect '{' before class body.")
+
+        val methods = mutableListOf<Stmt.Function>()
+        while (!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
+            methods.add(funDeclaration("method") as Stmt.Function)
+        }
+
+        consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.")
+        return Stmt.Class(name, superclass, methods)
     }
 
     private fun funDeclaration(kind: String): Stmt {
@@ -153,6 +173,8 @@ class Parser(private val tokens: List<Token>) {
 
             if (expr is Expr.Variable) {
                 return Expr.Assign(expr.name, value)
+            } else if (expr is Expr.Get) {
+                return Expr.Set(expr.obj, expr.name, value)
             }
 
             throw error(equals, "Invalid assignment target.")
@@ -235,6 +257,9 @@ class Parser(private val tokens: List<Token>) {
         while (true) {
             if (match(TokenType.LEFT_PAREN)) {
                 expr = finishCall(expr)
+            } else if (match(TokenType.DOT)) {
+                val name = consume(TokenType.IDENTIFIER, "Expect property name after '.'.")
+                expr = Expr.Get(expr, name)
             } else {
                 break
             }
@@ -263,6 +288,15 @@ class Parser(private val tokens: List<Token>) {
 
         if (match(TokenType.NUMBER, TokenType.STRING)) {
             return Expr.Literal(previous().literal)
+        }
+
+        if (match(TokenType.THIS)) return Expr.This(previous())
+
+        if (match(TokenType.SUPER)) {
+            val keyword = previous()
+            consume(TokenType.DOT, "Expect '.' after 'super'.")
+            val method = consume(TokenType.IDENTIFIER, "Expect superclass method name.")
+            return Expr.Super(keyword, method)
         }
 
         if (match(TokenType.IDENTIFIER)) {

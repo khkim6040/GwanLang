@@ -214,4 +214,72 @@ class ClassTest {
         assertFalse(GwanLang.hadError)
         assertEquals("1", output)
     }
+
+    // --- TDD 사이클 17~19: 상속, 오버라이드, super ---
+
+    @Test
+    fun `부모 클래스의 메서드를 상속한다`() {
+        val output = interpret("""
+            class A { greet() { return "hello"; } }
+            class B < A {}
+            print B().greet();
+        """.trimIndent())
+        assertFalse(GwanLang.hadError)
+        assertEquals("hello", output)
+    }
+
+    @Test
+    fun `자식 클래스가 부모 메서드를 오버라이드한다`() {
+        val output = interpret("""
+            class A { m() { return 1; } }
+            class B < A { m() { return 2; } }
+            print B().m();
+        """.trimIndent())
+        assertFalse(GwanLang.hadError)
+        assertEquals("2", output)
+    }
+
+    @Test
+    fun `super로 부모 메서드를 호출한다`() {
+        val output = interpret("""
+            class A { m() { return "A"; } }
+            class B < A { m() { return super.m() + "B"; } }
+            print B().m();
+        """.trimIndent())
+        assertFalse(GwanLang.hadError)
+        assertEquals("AB", output)
+    }
+
+    @Test
+    fun `다단계 상속에서 메서드를 탐색한다`() {
+        val output = interpret("""
+            class A { m() { return "A"; } }
+            class B < A {}
+            class C < B {}
+            print C().m();
+        """.trimIndent())
+        assertFalse(GwanLang.hadError)
+        assertEquals("A", output)
+    }
+
+    @Test
+    fun `클래스가 아닌 것을 상속하면 런타임 에러`() {
+        interpret("""var x = "not"; class B < x {}""")
+        assertTrue(GwanLang.hadRuntimeError)
+    }
+
+    @Test
+    fun `메서드를 변수에 저장하고 나중에 호출한다`() {
+        val output = interpret("""
+            class Foo {
+              init(x) { this.x = x; }
+              getX() { return this.x; }
+            }
+            var f = Foo(10);
+            var method = f.getX;
+            print method();
+        """.trimIndent())
+        assertFalse(GwanLang.hadError)
+        assertEquals("10", output)
+    }
 }

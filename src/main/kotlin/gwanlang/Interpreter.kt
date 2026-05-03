@@ -87,7 +87,20 @@ class Interpreter {
                 throw Return(value)
             }
             is Stmt.Class -> {
+                val superclass: Any? = if (stmt.superclass != null) {
+                    val sc = evaluate(stmt.superclass)
+                    if (sc !is GwanClass) {
+                        throw RuntimeError(stmt.superclass.name, "Superclass must be a class.")
+                    }
+                    sc
+                } else null
+
                 environment.define(stmt.name.lexeme, null)
+
+                if (stmt.superclass != null) {
+                    environment = Environment(environment)
+                    environment.define("super", superclass)
+                }
 
                 val methods = mutableMapOf<String, GwanFunction>()
                 for (method in stmt.methods) {
@@ -95,7 +108,12 @@ class Interpreter {
                     methods[method.name.lexeme] = function
                 }
 
-                val klass = GwanClass(stmt.name.lexeme, null, methods)
+                val klass = GwanClass(stmt.name.lexeme, superclass as GwanClass?, methods)
+
+                if (superclass != null) {
+                    environment = environment.enclosing!!
+                }
+
                 environment.assign(stmt.name, klass)
             }
         }
@@ -226,7 +244,14 @@ class Interpreter {
             value
         }
         is Expr.This -> lookUpVariable(expr.keyword, expr)
-        is Expr.Super -> TODO("Phase 7: inheritance")
+        is Expr.Super -> {
+            val distance = locals[expr]!!
+            val superclass = environment.getAt(distance, "super") as GwanClass
+            val obj = environment.getAt(distance - 1, "this") as GwanInstance
+            val method = superclass.findMethod(expr.method.lexeme)
+                ?: throw RuntimeError(expr.method, "Undefined property '${expr.method.lexeme}'.")
+            method.bind(obj)
+        }
     }
 
     private fun isTruthy(value: Any?): Boolean {

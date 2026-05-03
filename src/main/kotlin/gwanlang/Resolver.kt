@@ -55,6 +55,12 @@ class Resolver(private val interpreter: Interpreter) {
                 declare(stmt.name)
                 define(stmt.name)
 
+                if (stmt.superclass != null) {
+                    resolve(stmt.superclass)
+                    beginScope()
+                    scopes.last()["super"] = true
+                }
+
                 beginScope()
                 scopes.last()["this"] = true
 
@@ -63,6 +69,10 @@ class Resolver(private val interpreter: Interpreter) {
                 }
 
                 endScope()
+
+                if (stmt.superclass != null) {
+                    endScope()
+                }
             }
         }
     }

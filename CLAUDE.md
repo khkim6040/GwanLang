@@ -51,7 +51,7 @@ Kotlin (JVM) 프로젝트, Gradle (Kotlin DSL) 빌드. 패키지: `gwanlang`.
 
 ## 구현 Phase
 
-7단계 순차 진행. 다음 Phase 시작 전 이전 Phase 테스트가 모두 통과해야 한다.
+19단계 순차 진행. 다음 Phase 시작 전 이전 Phase 테스트가 모두 통과해야 한다.
 진행 상태는 `GWANLANG_SPEC.md` 6절에서 추적. 각 Phase는 아래 "Phase 작업 순서"에
 따라 스펙 문서 작성부터 시작한다.
 
@@ -64,6 +64,18 @@ Kotlin (JVM) 프로젝트, Gradle (Kotlin DSL) 빌드. 패키지: `gwanlang`.
 | 5 | Functions | 함수 선언/호출, 클로저, return | `docs/specs/phase5-functions.md` |
 | 6 | Resolver | 정적 변수 바인딩 | `docs/specs/phase6-resolver.md` |
 | 7 | Classes | 클래스, 상속, this, super | `docs/specs/phase7-classes.md` |
+| 8 | 연산자 확장 | `%`, `+=`, `-=`, `*=`, `/=`, `%=` | `docs/specs/phase8-operators.md` |
+| 9 | break/continue | 루프 제어흐름 | `docs/specs/phase9-loop-control.md` |
+| 10 | 내장 함수 확장 | `type`, `toString`, `toNumber`, `input`, `println` | `docs/specs/phase10-builtins.md` |
+| 11 | 배열 기본 | 리터럴, 인덱스 접근/대입 | `docs/specs/phase11-array-basic.md` |
+| 12 | 배열 메서드 | `push`, `pop`, `length`, `for-in` | `docs/specs/phase12-array-methods.md` |
+| 13 | 문자열 메서드 | `length`, `substring`, `indexOf`, `split` | `docs/specs/phase13-string-methods.md` |
+| 14 | 익명 함수 | 람다 표현식 | `docs/specs/phase14-lambda.md` |
+| 15 | 문자열 보간 | `"${expr}"` | `docs/specs/phase15-string-interpolation.md` |
+| 16 | 에러 핸들링 | `try/catch/throw` | `docs/specs/phase16-error-handling.md` |
+| 17 | 맵 | `{key: value}`, `keys`, `values` | `docs/specs/phase17-map.md` |
+| 18 | 표준 라이브러리 | 수학 함수, 파일 I/O | `docs/specs/phase18-stdlib.md` |
+| 19 | 모듈 시스템 | `import`, 스코프 분리 | `docs/specs/phase19-modules.md` |
 
 ## Phase 작업 순서 (스펙 우선 원칙)
 

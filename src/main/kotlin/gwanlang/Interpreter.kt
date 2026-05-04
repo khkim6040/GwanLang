@@ -245,7 +245,7 @@ class Interpreter {
         }
         is Expr.This -> lookUpVariable(expr.keyword, expr)
         is Expr.Super -> {
-            val distance = locals[expr]!!
+            val distance = requireNotNull(locals[expr]) { "Resolver did not resolve super expression." }
             val superclass = environment.getAt(distance, "super") as GwanClass
             val obj = environment.getAt(distance - 1, "this") as GwanInstance
             val method = superclass.findMethod(expr.method.lexeme)

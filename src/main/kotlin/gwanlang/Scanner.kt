@@ -24,30 +24,30 @@ class Scanner(private val source: String) {
             c == '}' -> addToken(TokenType.RIGHT_BRACE)
             c == ',' -> addToken(TokenType.COMMA)
             c == '.' -> addToken(TokenType.DOT)
-            c == '-' -> addToken(TokenType.MINUS)
-            c == '+' -> addToken(TokenType.PLUS)
+            c == '-' -> addToken(if (match('=')) TokenType.MINUS_EQUAL else TokenType.MINUS)
+            c == '+' -> addToken(if (match('=')) TokenType.PLUS_EQUAL else TokenType.PLUS)
             c == ';' -> addToken(TokenType.SEMICOLON)
-            c == '*' -> addToken(TokenType.STAR)
+            c == '*' -> addToken(if (match('=')) TokenType.STAR_EQUAL else TokenType.STAR)
+            c == '%' -> addToken(if (match('=')) TokenType.PERCENT_EQUAL else TokenType.PERCENT)
             c == '!' -> addToken(if (match('=')) TokenType.BANG_EQUAL else TokenType.BANG)
             c == '=' -> addToken(if (match('=')) TokenType.EQUAL_EQUAL else TokenType.EQUAL)
             c == '>' -> addToken(if (match('=')) TokenType.GREATER_EQUAL else TokenType.GREATER)
             c == '<' -> addToken(if (match('=')) TokenType.LESS_EQUAL else TokenType.LESS)
-            c == '/' -> slashOrComment()
+            c == '/' -> {
+                if (match('/')) {
+                    while (peek() != '\n' && !isAtEnd()) advance()
+                } else if (match('=')) {
+                    addToken(TokenType.SLASH_EQUAL)
+                } else {
+                    addToken(TokenType.SLASH)
+                }
+            }
             c == ' ' || c == '\r' || c == '\t' -> { /* 공백 무시 */ }
             c == '\n' -> line++
             c == '"' -> string()
             isDigit(c) -> number()
             isAlpha(c) -> identifier()
             else -> GwanLang.error(line, "Unexpected character '$c'.")
-        }
-    }
-
-    private fun slashOrComment() {
-        if (peek() == '/') {
-            // 단일 라인 주석: 개행 직전까지 소비
-            while (peek() != '\n' && !isAtEnd()) advance()
-        } else {
-            addToken(TokenType.SLASH)
         }
     }
 

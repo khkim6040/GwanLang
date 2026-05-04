@@ -1,0 +1,41 @@
+// Phase 8: 연산자 확장 시연
+
+// 모듈로 연산
+print 10 % 3;     // 1
+print 7.5 % 2.5;  // 0
+print -7 % 3;     // -1
+
+// 복합 대입 연산자
+var x = 10;
+x += 5;
+print x;  // 15
+x -= 3;
+print x;  // 12
+x *= 2;
+print x;  // 24
+x /= 4;
+print x;  // 6
+x %= 4;
+print x;  // 2
+
+// for 루프에서 복합 대입
+var sum = 0;
+for (var i = 1; i <= 10; i += 1) {
+    sum += i;
+}
+print sum;  // 55
+
+// 프로퍼티 복합 대입
+class Counter {
+    init() {
+        this.count = 0;
+    }
+    increment(n) {
+        this.count += n;
+    }
+}
+
+var c = Counter();
+c.increment(5);
+c.increment(3);
+print c.count;  // 8

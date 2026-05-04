@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+### Phase 8: 연산자 확장 — 모듈로 & 복합 대입
+- `TokenType` 확장 — 6종 추가 (`PERCENT`, `PLUS_EQUAL`, `MINUS_EQUAL`, `STAR_EQUAL`, `SLASH_EQUAL`, `PERCENT_EQUAL`)
+- `Scanner` 확장
+  - `%`, `%=` 토큰 스캔
+  - `+`, `-`, `*` 뒤에 `=`가 오면 복합 대입 토큰으로 인식
+  - `/` 분기 리팩토링: 주석(`//`) / 복합 대입(`/=`) / 나눗셈(`/`) 삼분기
+- `Parser` 확장
+  - `factor()`에 `PERCENT` 추가 (`*`, `/`와 동일 우선순위)
+  - `assignment()`에서 복합 대입 디슈가링 (for 디슈가링과 동일 패턴)
+    - `x += 1` → `Expr.Assign(x, Expr.Binary(Variable(x), +, 1))`
+    - `obj.f += 1` → `Expr.Set(obj, f, Expr.Binary(Get(obj, f), +, 1))`
+  - `compoundToOperator()` 헬퍼 — 복합 대입 토큰 → 산술 연산자 토큰 변환
+- `Interpreter` 확장
+  - `Expr.Binary`에 `PERCENT` 평가 (Kotlin `%` 연산자 사용)
+  - 0으로 모듈로 시 RuntimeError: "Modulo by zero."
+- Resolver 변경 없음 (디슈가링으로 기존 AST 노드 재활용)
+- `examples/operators.gwan` — 모듈로, 복합 대입, for 루프, 프로퍼티 복합 대입 시연
+- 테스트: `OperatorTest` — TDD 사이클 20개 기반
+
 ### Phase 7: Classes — 클래스와 상속
 - AST 확장 — `Expr.Get`, `Expr.Set`, `Expr.This`, `Expr.Super`, `Stmt.Class`
 - `Parser` 확장

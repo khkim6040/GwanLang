@@ -166,6 +166,15 @@ class Interpreter {
                     }
                     leftNum / rightNum
                 }
+                TokenType.PERCENT -> {
+                    checkNumberOperands(expr.op, left, right)
+                    val leftNum = left as Double
+                    val rightNum = right as Double
+                    if (rightNum == 0.0) {
+                        throw RuntimeError(expr.op, "Modulo by zero.")
+                    }
+                    leftNum % rightNum
+                }
                 TokenType.PLUS -> {
                     if (left is Double && right is Double) left + right
                     else if (left is String && right is String) left + right

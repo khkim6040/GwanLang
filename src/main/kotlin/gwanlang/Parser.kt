@@ -180,7 +180,45 @@ class Parser(private val tokens: List<Token>) {
             throw error(equals, "Invalid assignment target.")
         }
 
+        if (match(TokenType.PLUS_EQUAL, TokenType.MINUS_EQUAL,
+                  TokenType.STAR_EQUAL, TokenType.SLASH_EQUAL,
+                  TokenType.PERCENT_EQUAL)) {
+            val op = previous()
+            val value = assignment()
+            val binaryOp = compoundToOperator(op)
+
+            if (expr is Expr.Variable) {
+                val binary = Expr.Binary(Expr.Variable(expr.name), binaryOp, value)
+                return Expr.Assign(expr.name, binary)
+            } else if (expr is Expr.Get) {
+                val binary = Expr.Binary(Expr.Get(expr.obj, expr.name), binaryOp, value)
+                return Expr.Set(expr.obj, expr.name, binary)
+            }
+
+            throw error(op, "Invalid assignment target.")
+        }
+
         return expr
+    }
+
+    private fun compoundToOperator(compoundOp: Token): Token {
+        val type = when (compoundOp.type) {
+            TokenType.PLUS_EQUAL    -> TokenType.PLUS
+            TokenType.MINUS_EQUAL   -> TokenType.MINUS
+            TokenType.STAR_EQUAL    -> TokenType.STAR
+            TokenType.SLASH_EQUAL   -> TokenType.SLASH
+            TokenType.PERCENT_EQUAL -> TokenType.PERCENT
+            else -> throw IllegalStateException("Not a compound assignment operator: ${compoundOp.type}")
+        }
+        val lexeme = when (type) {
+            TokenType.PLUS    -> "+"
+            TokenType.MINUS   -> "-"
+            TokenType.STAR    -> "*"
+            TokenType.SLASH   -> "/"
+            TokenType.PERCENT -> "%"
+            else -> throw IllegalStateException()
+        }
+        return Token(type, lexeme, null, compoundOp.line)
     }
 
     private fun or(): Expr {
@@ -235,7 +273,7 @@ class Parser(private val tokens: List<Token>) {
 
     private fun factor(): Expr {
         var expr = unary()
-        while (match(TokenType.SLASH, TokenType.STAR)) {
+        while (match(TokenType.SLASH, TokenType.STAR, TokenType.PERCENT)) {
             val op = previous()
             val right = unary()
             expr = Expr.Binary(expr, op, right)

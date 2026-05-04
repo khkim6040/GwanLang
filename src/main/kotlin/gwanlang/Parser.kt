@@ -38,14 +38,14 @@ class Parser(private val tokens: List<Token>) {
 
         val methods = mutableListOf<Stmt.Function>()
         while (!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
-            methods.add(funDeclaration("method") as Stmt.Function)
+            methods.add(funDeclaration("method"))
         }
 
         consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.")
         return Stmt.Class(name, superclass, methods)
     }
 
-    private fun funDeclaration(kind: String): Stmt {
+    private fun funDeclaration(kind: String): Stmt.Function {
         val name = consume(TokenType.IDENTIFIER, "Expect $kind name.")
         consume(TokenType.LEFT_PAREN, "Expect '(' after $kind name.")
         val params = mutableListOf<Token>()

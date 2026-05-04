@@ -34,11 +34,14 @@ class TokenTest {
         TokenType.MINUS; TokenType.PLUS
         TokenType.SEMICOLON; TokenType.SLASH; TokenType.STAR
 
-        // 1~2 문자 (8종)
+        // 1~2 문자 (14종)
         TokenType.BANG; TokenType.BANG_EQUAL
         TokenType.EQUAL; TokenType.EQUAL_EQUAL
         TokenType.GREATER; TokenType.GREATER_EQUAL
         TokenType.LESS; TokenType.LESS_EQUAL
+        TokenType.PERCENT
+        TokenType.PLUS_EQUAL; TokenType.MINUS_EQUAL
+        TokenType.STAR_EQUAL; TokenType.SLASH_EQUAL; TokenType.PERCENT_EQUAL
 
         // 리터럴 (3종)
         TokenType.IDENTIFIER; TokenType.STRING; TokenType.NUMBER
@@ -51,7 +54,7 @@ class TokenTest {
 
         TokenType.EOF
 
-        // 총 개수 검증: 11 + 8 + 3 + 16 + 1 = 39
-        assertEquals(39, TokenType.values().size)
+        // 총 개수 검증: 11 + 14 + 3 + 16 + 1 = 45
+        assertEquals(45, TokenType.values().size)
     }
 }

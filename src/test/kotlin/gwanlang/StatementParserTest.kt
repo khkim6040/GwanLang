@@ -131,30 +131,28 @@ class StatementParserTest {
         assertIs<Stmt.Print>(whileStmt.body)
     }
 
-    // --- for 문 (while로 디슈가링) ---
+    // --- for 문 (Stmt.For) ---
 
     @Test
-    fun `for 문을 while로 디슈가링한다`() {
+    fun `for 문을 Stmt_For로 파싱한다`() {
         val stmts = parse("for (var i = 0; i < 10; i = i + 1) print i;")
 
-        // 외부 블록: { var i = 0; while (...) { ... } }
         assertEquals(1, stmts.size)
-        val block = assertIs<Stmt.Block>(stmts[0])
-        assertEquals(2, block.statements.size)
-        assertIs<Stmt.Var>(block.statements[0])
-        val whileStmt = assertIs<Stmt.While>(block.statements[1])
-        // while 본문은 블록: { print i; i = i + 1; }
-        val body = assertIs<Stmt.Block>(whileStmt.body)
-        assertEquals(2, body.statements.size)
+        val forStmt = assertIs<Stmt.For>(stmts[0])
+        assertIs<Stmt.Var>(forStmt.initializer!!)
+        assertIs<Expr.Binary>(forStmt.condition!!)
+        assertIs<Expr.Assign>(forStmt.increment!!)
+        assertIs<Stmt.Print>(forStmt.body)
     }
 
     @Test
     fun `for 문에서 초기화와 증분을 생략할 수 있다`() {
         val stmts = parse("for (;true;) print 1;")
 
-        // 초기화 없음 → 블록 없이 바로 while
-        val whileStmt = assertIs<Stmt.While>(stmts[0])
-        assertIs<Expr.Literal>(whileStmt.condition)
+        val forStmt = assertIs<Stmt.For>(stmts[0])
+        assertNull(forStmt.initializer)
+        assertIs<Expr.Literal>(forStmt.condition!!)
+        assertNull(forStmt.increment)
     }
 
     // --- 논리 연산자 ---

@@ -10,4 +10,7 @@ sealed class Stmt {
     data class Function(val name: Token, val params: List<Token>, val body: List<Stmt>) : Stmt()
     data class Return(val keyword: Token, val value: Expr?) : Stmt()
     data class Class(val name: Token, val superclass: Expr.Variable?, val methods: List<Stmt.Function>) : Stmt()
+    data class Break(val keyword: Token) : Stmt()
+    data class Continue(val keyword: Token) : Stmt()
+    data class For(val initializer: Stmt?, val condition: Expr?, val increment: Expr?, val body: Stmt) : Stmt()
 }

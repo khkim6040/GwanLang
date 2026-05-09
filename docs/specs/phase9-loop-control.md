@@ -366,9 +366,11 @@ is Stmt.For -> {
 }
 ```
 
-**환경 관리**: `Stmt.For`는 initializer의 변수 스코프를 위해 항상 새 환경을 생성한다.
-initializer가 없더라도 일관성을 위해 새 환경을 생성하며, 이는 기존 `for` 디슈가링의
-`Stmt.Block` 래핑과 동일한 효과다.
+**환경 관리**: `Stmt.For`는 initializer 유무와 관계없이 항상 새 환경을 생성한다.
+기존 `for` 디슈가링에서는 initializer가 있을 때만 외부 `Stmt.Block`으로 감싸
+스코프를 만들었으나, `Stmt.For`에서는 일관성을 위해 항상 새 스코프를 둔다.
+initializer가 없는 경우에도 루프 본문의 변수가 루프 밖으로 누출되지 않으므로
+더 엄격하고 예측 가능한 규칙이다.
 
 #### 4.7.3 `Stmt.Break` / `Stmt.Continue` — 예외 throw
 

@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Phase 9: break / continue — 루프 제어흐름 (2026-05-05)
+
+- `break` 문: 가장 가까운 루프 즉시 종료
+- `continue` 문: 현재 반복 건너뛰고 다음 반복으로
+- `Stmt.For` AST 노드 도입 (기존 for 디슈가링 제거)
+  - `continue` 시 increment 표현식이 항상 실행됨
+- Resolver: 루프 밖 break/continue 정적 에러 검출
+- Resolver: 함수 경계에서 루프 상태 리셋
+
 ### Phase 8: 연산자 확장 — 모듈로 & 복합 대입
 - `TokenType` 확장 — 6종 추가 (`PERCENT`, `PLUS_EQUAL`, `MINUS_EQUAL`, `STAR_EQUAL`, `SLASH_EQUAL`, `PERCENT_EQUAL`)
 - `Scanner` 확장

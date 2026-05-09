@@ -38,6 +38,12 @@ class Interpreter {
         } catch (_: Return) {
             System.err.println("RuntimeError: Can't return from top-level code.")
             GwanLang.hadRuntimeError = true
+        } catch (_: Break) {
+            System.err.println("RuntimeError: Can't use 'break' outside of a loop.")
+            GwanLang.hadRuntimeError = true
+        } catch (_: Continue) {
+            System.err.println("RuntimeError: Can't use 'continue' outside of a loop.")
+            GwanLang.hadRuntimeError = true
         }
     }
 
@@ -74,10 +80,41 @@ class Interpreter {
                 }
             }
             is Stmt.While -> {
-                while (isTruthy(evaluate(stmt.condition))) {
-                    execute(stmt.body)
+                try {
+                    while (isTruthy(evaluate(stmt.condition))) {
+                        try {
+                            execute(stmt.body)
+                        } catch (_: Continue) {
+                            // 다음 반복으로
+                        }
+                    }
+                } catch (_: Break) {
+                    // 루프 탈출
                 }
             }
+            is Stmt.For -> {
+                val forEnv = Environment(environment)
+                val previous = this.environment
+                try {
+                    this.environment = forEnv
+                    if (stmt.initializer != null) execute(stmt.initializer)
+                    val condition = stmt.condition ?: Expr.Literal(true)
+                    while (isTruthy(evaluate(condition))) {
+                        try {
+                            execute(stmt.body)
+                        } catch (_: Continue) {
+                            // body 나머지 건너뛰고 increment로
+                        }
+                        if (stmt.increment != null) evaluate(stmt.increment)
+                    }
+                } catch (_: Break) {
+                    // 루프 탈출
+                } finally {
+                    this.environment = previous
+                }
+            }
+            is Stmt.Break -> throw Break()
+            is Stmt.Continue -> throw Continue()
             is Stmt.Function -> {
                 val function = GwanFunction(stmt, environment)
                 environment.define(stmt.name.lexeme, function)

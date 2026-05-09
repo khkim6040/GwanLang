@@ -113,7 +113,9 @@ class Scanner(private val source: String) {
     companion object {
         private val KEYWORDS: Map<String, TokenType> = mapOf(
             "and" to TokenType.AND,
+            "break" to TokenType.BREAK,
             "class" to TokenType.CLASS,
+            "continue" to TokenType.CONTINUE,
             "else" to TokenType.ELSE,
             "false" to TokenType.FALSE,
             "for" to TokenType.FOR,

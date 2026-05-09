@@ -5,6 +5,7 @@ class Resolver(private val interpreter: Interpreter) {
     private val scopes = ArrayDeque<MutableMap<String, Boolean>>()
     private var currentFunction = FunctionType.NONE
     private var currentClass = ClassType.NONE
+    private var currentLoop = 0
 
     fun resolve(statements: List<Stmt>) {
         for (statement in statements) {
@@ -53,7 +54,29 @@ class Resolver(private val interpreter: Interpreter) {
             }
             is Stmt.While -> {
                 resolve(stmt.condition)
+                currentLoop++
                 resolve(stmt.body)
+                currentLoop--
+            }
+            is Stmt.For -> {
+                beginScope()
+                if (stmt.initializer != null) resolve(stmt.initializer)
+                if (stmt.condition != null) resolve(stmt.condition)
+                if (stmt.increment != null) resolve(stmt.increment)
+                currentLoop++
+                resolve(stmt.body)
+                currentLoop--
+                endScope()
+            }
+            is Stmt.Break -> {
+                if (currentLoop == 0) {
+                    GwanLang.error(stmt.keyword, "Can't use 'break' outside of a loop.")
+                }
+            }
+            is Stmt.Continue -> {
+                if (currentLoop == 0) {
+                    GwanLang.error(stmt.keyword, "Can't use 'continue' outside of a loop.")
+                }
             }
             is Stmt.Class -> {
                 val enclosingClass = currentClass
@@ -151,7 +174,9 @@ class Resolver(private val interpreter: Interpreter) {
 
     private fun resolveFunction(function: Stmt.Function, type: FunctionType) {
         val enclosingFunction = currentFunction
+        val enclosingLoop = currentLoop
         currentFunction = type
+        currentLoop = 0
 
         beginScope()
         for (param in function.params) {
@@ -162,6 +187,7 @@ class Resolver(private val interpreter: Interpreter) {
         endScope()
 
         currentFunction = enclosingFunction
+        currentLoop = enclosingLoop
     }
 
     private fun beginScope() {

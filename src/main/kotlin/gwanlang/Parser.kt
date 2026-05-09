@@ -73,6 +73,8 @@ class Parser(private val tokens: List<Token>) {
     // --- 문장 ---
 
     private fun statement(): Stmt {
+        if (match(TokenType.BREAK)) return breakStatement()
+        if (match(TokenType.CONTINUE)) return continueStatement()
         if (match(TokenType.PRINT)) return printStatement()
         if (match(TokenType.RETURN)) return returnStatement()
         if (match(TokenType.LEFT_BRACE)) return Stmt.Block(block())
@@ -80,6 +82,18 @@ class Parser(private val tokens: List<Token>) {
         if (match(TokenType.WHILE)) return whileStatement()
         if (match(TokenType.FOR)) return forStatement()
         return expressionStatement()
+    }
+
+    private fun breakStatement(): Stmt {
+        val keyword = previous()
+        consume(TokenType.SEMICOLON, "Expect ';' after 'break'.")
+        return Stmt.Break(keyword)
+    }
+
+    private fun continueStatement(): Stmt {
+        val keyword = previous()
+        consume(TokenType.SEMICOLON, "Expect ';' after 'continue'.")
+        return Stmt.Continue(keyword)
     }
 
     private fun returnStatement(): Stmt {
@@ -139,25 +153,15 @@ class Parser(private val tokens: List<Token>) {
             expressionStatement()
         }
 
-        val condition = if (!check(TokenType.SEMICOLON)) expression() else Expr.Literal(true)
+        val condition = if (!check(TokenType.SEMICOLON)) expression() else null
         consume(TokenType.SEMICOLON, "Expect ';' after loop condition.")
 
         val increment = if (!check(TokenType.RIGHT_PAREN)) expression() else null
         consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.")
 
-        var body: Stmt = statement()
+        val body = statement()
 
-        if (increment != null) {
-            body = Stmt.Block(listOf(body, Stmt.Expression(increment)))
-        }
-
-        body = Stmt.While(condition, body)
-
-        if (initializer != null) {
-            body = Stmt.Block(listOf(initializer, body))
-        }
-
-        return body
+        return Stmt.For(initializer, condition, increment, body)
     }
 
     // --- 표현식 ---
@@ -393,8 +397,10 @@ class Parser(private val tokens: List<Token>) {
         while (!isAtEnd()) {
             if (previous().type == TokenType.SEMICOLON) return
             when (peek().type) {
-                TokenType.CLASS, TokenType.FUN, TokenType.VAR, TokenType.FOR,
-                TokenType.IF, TokenType.WHILE, TokenType.PRINT, TokenType.RETURN -> return
+                TokenType.BREAK, TokenType.CLASS, TokenType.CONTINUE,
+                TokenType.FUN, TokenType.VAR, TokenType.FOR,
+                TokenType.IF, TokenType.WHILE, TokenType.PRINT,
+                TokenType.RETURN -> return
                 else -> advance()
             }
         }

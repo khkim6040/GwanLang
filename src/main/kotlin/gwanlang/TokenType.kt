@@ -15,8 +15,8 @@ enum class TokenType {
     // 리터럴 (3종)
     IDENTIFIER, STRING, NUMBER,
 
-    // 키워드 (16종)
-    AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
+    // 키워드 (18종)
+    AND, BREAK, CLASS, CONTINUE, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
     PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
 
     EOF,

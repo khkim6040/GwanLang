@@ -46,15 +46,16 @@ class TokenTest {
         // 리터럴 (3종)
         TokenType.IDENTIFIER; TokenType.STRING; TokenType.NUMBER
 
-        // 키워드 (16종)
-        TokenType.AND; TokenType.CLASS; TokenType.ELSE; TokenType.FALSE
+        // 키워드 (18종)
+        TokenType.AND; TokenType.BREAK; TokenType.CLASS; TokenType.CONTINUE
+        TokenType.ELSE; TokenType.FALSE
         TokenType.FUN; TokenType.FOR; TokenType.IF; TokenType.NIL
         TokenType.OR; TokenType.PRINT; TokenType.RETURN; TokenType.SUPER
         TokenType.THIS; TokenType.TRUE; TokenType.VAR; TokenType.WHILE
 
         TokenType.EOF
 
-        // 총 개수 검증: 11 + 14 + 3 + 16 + 1 = 45
-        assertEquals(45, TokenType.values().size)
+        // 총 개수 검증: 11 + 14 + 3 + 18 + 1 = 47
+        assertEquals(47, TokenType.values().size)
     }
 }

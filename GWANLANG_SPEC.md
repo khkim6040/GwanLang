@@ -580,7 +580,7 @@ class Environment(val enclosing: Environment? = null) {
 | 6. Resolver | ✅ 완료 | 2026-04-29 | 2026-04-30 | TDD 사이클 15개 |
 | 7. Classes | ✅ 완료 | 2026-05-03 | 2026-05-03 | TDD 사이클 27개 |
 | 8. 연산자 확장 | ✅ 완료 | 2026-05-05 | 2026-05-05 | TDD 사이클 20개, 디슈가링 방식 |
-| 9. break/continue | ⬜ 대기 | | | 루프 제어흐름 |
+| 9. break/continue | ✅ 완료 | 2026-05-05 | 2026-05-05 | Stmt.For 도입, TDD 사이클 17개 |
 | 10. 내장 함수 확장 | ⬜ 대기 | | | `type`, `toString`, `toNumber`, `input`, `println` |
 | 11. 배열 기본 | ⬜ 대기 | | | 리터럴, 인덱스 접근/대입 |
 | 12. 배열 메서드 | ⬜ 대기 | | | `push`, `pop`, `length`, `for-in` |
